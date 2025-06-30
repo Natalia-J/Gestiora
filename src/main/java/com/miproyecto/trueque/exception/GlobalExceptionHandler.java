@@ -32,4 +32,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> passwordInvalid(PasswordInvalidException noValido){
         return construccionRespuesta("Contraseña invalida", noValido.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(EmpresaExistenteException.class)
+    public ResponseEntity<ErrorResponse> empresaYaExistente(EmpresaExistenteException existente){
+        return construccionRespuesta("Ya existe una empresa con el RFC", existente.getMessage(), HttpStatus.CONFLICT);
+    }
 }

@@ -12,7 +12,7 @@ public class Direccion {
     private Long id;
 
     @Column(name = "calle_empresa", nullable = false)
-    private String calleEnpresa;
+    private String calleEmpresa;
     @Column(name = "num_interno")
     private String numInterno;
     @Column(name = "num_externo")

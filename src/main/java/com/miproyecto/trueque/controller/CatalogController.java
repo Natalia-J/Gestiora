@@ -20,7 +20,7 @@ public class CatalogController {
         this.catalogService = catalogService;
     }
 
-    @GetMapping("/catalogos")
+    @GetMapping
     public ResponseEntity<CatalogsResponse> listarCatalogos(){
         return ResponseEntity.ok(catalogService.getAllCatalogs());
     }

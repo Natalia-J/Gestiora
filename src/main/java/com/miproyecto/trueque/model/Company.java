@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table
+@Table(name = "company")
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +38,16 @@ public class Company {
     private String rfc;
     @Column(name = "registro_infonavit_empresa")
     private String infonavit;
+    @Column(name = "nombre_representante", nullable = false)
+    private String nombreRepresentante;
+    @Column(name = "apellido_Pa_representante", nullable = false)
+    private String apellidoPaRepresentante;
+    @Column(name = "apellido_Ma_representante", nullable = false)
+    private String apellidoMaRepresentante;
     @ManyToOne
     @JoinColumn(name = "zona_salarial_id")
     private ZonaSalarioGeneral zonaSalario;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "direccion_id")
     private Direccion direccionCompany;
     @ManyToOne
@@ -50,7 +56,4 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "regimen_fiscal_id")
     private RegimenFiscal regimenFiscalCompany;
-
-
-
 }

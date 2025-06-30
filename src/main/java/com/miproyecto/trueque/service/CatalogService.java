@@ -65,7 +65,7 @@ public class CatalogService {
         List<GenericCatalogResponse> tipoPrestacion = tipoPrestacionRepository.getAllTipoPrestacion();
         List<GenericCatalogResponse> zonaSalario = zonaSalarioRepository.getAllZonaSalario();
 
-        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoContrato, tipoCodigo, tipoPeriodo, tipoPrestacion, zonaSalario);
+        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoCodigo, tipoContrato, tipoPeriodo, tipoPrestacion, zonaSalario);
 
     }
 
