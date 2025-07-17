@@ -1,9 +1,7 @@
 package com.miproyecto.trueque.model;
 
-import com.miproyecto.trueque.model.catalogs.Direccion;
-import com.miproyecto.trueque.model.catalogs.RegimenFiscal;
-import com.miproyecto.trueque.model.catalogs.TipoCodigoEmpleado;
-import com.miproyecto.trueque.model.catalogs.ZonaSalarioGeneral;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.miproyecto.trueque.model.catalogs.*;
 import com.miproyecto.trueque.model.enums.RegimenFiscalCompanyEnum;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,7 +14,7 @@ import java.time.LocalDate;
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "nombre_empresa", unique = true, nullable = false)
     private String nombre;
@@ -56,4 +54,9 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "regimen_fiscal_id")
     private RegimenFiscal regimenFiscalCompany;
+
+    @OneToOne
+    @JoinColumn(name = "periodo_activo_id")
+    @JsonManagedReference
+    private TipoPeriodo periodoActivo;
 }

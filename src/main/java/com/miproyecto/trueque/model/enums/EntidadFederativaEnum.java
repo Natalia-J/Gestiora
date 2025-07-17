@@ -39,5 +39,5 @@ public enum EntidadFederativaEnum {
     YUCATAN("Yucatán"),
     ZACATECAS("Zacatecas");
 
-    private final String entidadFederativa;
+    private final String descipcion;
 }

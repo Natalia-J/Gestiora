@@ -17,7 +17,4 @@ public class BaseCotizacionEmpleado {
     @Enumerated(value = EnumType.STRING)
     private BaseCotizacionEnum baseCotizacion;
 
-    @ManyToOne
-    @JoinColumn(name = "sbc_empleado_id")
-    private SBCEmpleado sbcEmpleado;
 }

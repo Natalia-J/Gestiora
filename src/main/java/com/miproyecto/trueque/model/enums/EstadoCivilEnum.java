@@ -1,9 +1,16 @@
 package com.miproyecto.trueque.model.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum EstadoCivilEnum {
-    Soltero,
-    Casado,
-    Viudo,
-    Union_Libre,
-    Divorciado;
+    SOLTERO("Soltero"),
+    CASADO("Casado"),
+    VIUDO("Viudo"),
+    UNION_LIBRE("Union Libre"),
+    DIVORCIADO("Divorciado");
+
+    private final String descripcion;
 }

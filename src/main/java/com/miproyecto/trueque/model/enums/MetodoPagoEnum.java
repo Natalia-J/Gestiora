@@ -15,6 +15,6 @@ public enum MetodoPagoEnum {
     EFECTIVO("efectivo"),
     CHEQUE("cheque nominativo");
 
-    private final String metodoPago;
+    private final String descripcion;
 
 }

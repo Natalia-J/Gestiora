@@ -10,5 +10,5 @@ public enum AvisoIMSSEnum {
     BAJA("Baja"),
     CAMBIOS_SALARIALES("Cambios Salariales");
 
-    private final String avisoImssEmpleado;
+    private final String descripcion;
 }

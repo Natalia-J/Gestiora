@@ -1,11 +1,18 @@
 package com.miproyecto.trueque.config;
 
+import com.miproyecto.trueque.model.Company;
 import com.miproyecto.trueque.model.catalogs.*;
 import com.miproyecto.trueque.model.enums.*;
+import com.miproyecto.trueque.repository.EmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.*;
+import com.miproyecto.trueque.service.EmpresaService;
+import com.miproyecto.trueque.service.TipoPeriodoService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +32,11 @@ public class DatosGeneralesSeeder {
     private final TipoPeriodoRepository tipoPeriodoRepository;
     private final TipoPrestacionRepository tipoPrestacionRepository;
     private final ZonaSalarioRepository zonaSalarioRepository;
+    private final TipoJornadaRepository tipoJornadaRepository;
+    private final BasePagoRepository basePagoRepository;
+    private final DiaSemanaRepository diaSemanaRepository;
+    private final EmpresaRepository empresaRepository;
+    private final TipoPeriodoService tipoPeriodoService;
 
     @PostConstruct
     public void cargarDatosGenerales() {
@@ -39,9 +51,17 @@ public class DatosGeneralesSeeder {
         cargarSindicato();
         cargarTipoContrato();
         cargarTipoCodigoEmpleado();
-        cargarTipoPeriodo();
+        // 🟨 Obtener o crear empresa de ejemplo
+        Company empresa = empresaRepository.findById(1L).orElse(null);
+        if (empresa != null) {
+            cargarTipoPeriodo(empresa); // ✅ Aquí pasas la empresa
+        }
         cargarTipoPrestacion();
         cargarZonaSalario();
+        cargarTipoJornada();
+        cargarBaseDePago();
+        cargarTipoJornada();
+        cargarDiaSemana();
     }
 
     private void cargarGeneros() {
@@ -157,15 +177,14 @@ public class DatosGeneralesSeeder {
         }
     }
 
-    private void cargarTipoPeriodo() {
+    private void cargarTipoPeriodo(Company empresa) {
         if (tipoPeriodoRepository.count() == 0) {
             for (TipoPeriodoEnum periodo : TipoPeriodoEnum.values()) {
-                TipoPeriodo entidad = new TipoPeriodo();
-                entidad.setPeriodo(periodo);
-                tipoPeriodoRepository.save(entidad);
+                tipoPeriodoService.crearPeriodoInicial(empresa, periodo, LocalDate.now());
             }
         }
     }
+
 
     private void cargarTipoPrestacion() {
         if (tipoPrestacionRepository.count() == 0) {
@@ -186,4 +205,50 @@ public class DatosGeneralesSeeder {
             }
         }
     }
+
+    private void cargarBaseDePago(){
+        if(basePagoRepository.count() == 0){
+            for(BasePagoEnum pago: BasePagoEnum.values()) {
+                BaseDePago entidad = new BaseDePago();
+                entidad.setBaseDePago(pago);
+                basePagoRepository.save(entidad);
+            }
+        }
+    }
+
+    private void cargarTipoJornada(){
+        if(tipoJornadaRepository.count() == 0){
+            TipoJornada diurna = new TipoJornada();
+            diurna.setTipoJornada(TipoJornadaEnum.DIURNA);
+            diurna.setHoraInicio(LocalTime.of(6, 0));      // 06:00
+            diurna.setHoraFin(LocalTime.of(20, 0));        // 20:00
+            diurna.setDuracionMaxima(8.0);
+            tipoJornadaRepository.save(diurna);
+
+            TipoJornada nocturna = new TipoJornada();
+            nocturna.setTipoJornada(TipoJornadaEnum.NOCTURNA);
+            nocturna.setHoraInicio(LocalTime.of(20, 0));   // 20:00
+            nocturna.setHoraFin(LocalTime.of(6, 0));       // 06:00
+            nocturna.setDuracionMaxima(7.0);
+            tipoJornadaRepository.save(nocturna);
+
+            TipoJornada mixta = new TipoJornada();
+            mixta.setTipoJornada(TipoJornadaEnum.MIXTA);
+            mixta.setHoraInicio(null);
+            mixta.setHoraFin(null);
+            mixta.setDuracionMaxima(7.5);
+            tipoJornadaRepository.save(mixta);
+        }
+    }
+
+    private void cargarDiaSemana(){
+        if(diaSemanaRepository.count()==0){
+            for(DiaSemanaEnum dia: DiaSemanaEnum.values()){
+                DiaSemana entidad= new DiaSemana();
+                entidad.setDiaSemana(dia);
+                diaSemanaRepository.save(entidad);
+            }
+        }
+    }
+
 }

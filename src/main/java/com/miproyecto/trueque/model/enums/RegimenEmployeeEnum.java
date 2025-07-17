@@ -15,5 +15,5 @@ public enum RegimenEmployeeEnum {
     ENAJENACION("Régimen de Enajenación de Bienes"),
     CONSOLIDACION("Régimen de Consolidación Fiscal");
 
-    private final String regimenEmpleado;
+    private final String descripcion;
 }

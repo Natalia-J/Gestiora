@@ -26,5 +26,8 @@ public class CatalogsResponse {
     private List<GenericCatalogResponse> tipoPeriodo;
     private List<GenericCatalogResponse> tipoPrestacionEmpleado;
     private List<GenericCatalogResponse> zonaSalarioGeneral;
+    private List<GenericCatalogResponse> tipoJornada;
+    private List<GenericCatalogResponse> baseDePago;
+    private List<GenericCatalogResponse> diaSemana;
 
 }

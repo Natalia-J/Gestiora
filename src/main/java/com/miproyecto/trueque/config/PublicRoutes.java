@@ -9,4 +9,10 @@ public abstract class PublicRoutes {
                 "/api/clients/login"
         );
     }
+    public static List<String> rutasSinEmpresa() {
+        return List.of(
+                "/api/empresa/crear",
+                "/api/empresa/obtener"
+        );
+    }
 }

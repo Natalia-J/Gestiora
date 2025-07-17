@@ -10,5 +10,5 @@ public enum SBCEnum {
     VARIABLE("SBC porte variable"),
     TIPADO("SBC(tipado a 25 UMAS");
 
-    private final String SBC;
+    private final String descripcion;
 }

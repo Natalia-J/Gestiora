@@ -3,6 +3,7 @@ package com.miproyecto.trueque.controller;
 import com.miproyecto.trueque.dto.EmpresaRequest;
 import com.miproyecto.trueque.model.Company;
 import com.miproyecto.trueque.service.EmpresaService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class EmpresaController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Company> crearEmpresa(@RequestBody EmpresaRequest empresaRequest){
+    public ResponseEntity<Company> crearEmpresa(@Valid @RequestBody EmpresaRequest empresaRequest){
         log.info(empresaRequest.toString());
         Company nuevaEmpresa = empresaService.crearEmpresa(empresaRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaEmpresa);

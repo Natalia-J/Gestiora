@@ -9,5 +9,5 @@ public enum ZonaSalarioEnum {
     ZLFN("Zona Libre de la Frontera Norte"),
     SMG("Salario Minimo General");
 
-    private final String zona;
+    private final String descripcion;
 }

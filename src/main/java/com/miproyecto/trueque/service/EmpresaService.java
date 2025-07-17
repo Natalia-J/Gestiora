@@ -4,11 +4,14 @@ import com.miproyecto.trueque.dto.DireccionRequest;
 import com.miproyecto.trueque.dto.EmpresaRequest;
 import com.miproyecto.trueque.exception.EmpresaExistenteException;
 import com.miproyecto.trueque.model.Company;
+import com.miproyecto.trueque.model.Departamento;
 import com.miproyecto.trueque.model.catalogs.Direccion;
+import com.miproyecto.trueque.repository.DepartamentoRepository;
 import com.miproyecto.trueque.repository.EmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.RegimenEmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.TipoCodigoEmpleadoRepository;
 import com.miproyecto.trueque.repository.catalog.ZonaSalarioRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,26 +20,37 @@ import java.util.Optional;
 @Service
 public class EmpresaService {
     private EmpresaRepository empresaRepository;
+    private DepartamentoRepository departamentoRepository;
     private ZonaSalarioRepository zonaSalarioRepository;
     private TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository;
     private RegimenEmpresaRepository regimenEmpresaRepository;
 
-    public EmpresaService(EmpresaRepository empresaRepository, ZonaSalarioRepository zonaSalarioRepository, TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository, RegimenEmpresaRepository regimenEmpresaRepository){
+    public EmpresaService(EmpresaRepository empresaRepository, ZonaSalarioRepository zonaSalarioRepository, TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository, RegimenEmpresaRepository regimenEmpresaRepository, DepartamentoRepository departamentoRepository){
         this.empresaRepository = empresaRepository;
         this.zonaSalarioRepository = zonaSalarioRepository;
         this.tipoCodigoEmpleadoRepository = tipoCodigoEmpleadoRepository;
         this.regimenEmpresaRepository = regimenEmpresaRepository;
+        this.departamentoRepository=departamentoRepository;
     }
 
-    public Company crearEmpresa(EmpresaRequest dto){
-        if(empresaRepository.existsByRfc(dto.getRfc())){
+    @Transactional
+    public Company crearEmpresa(EmpresaRequest dto) {
+        if (empresaRepository.existsByRfc(dto.getRfc())) {
             throw new EmpresaExistenteException("Ya existe una empresa con el RFC: " + dto.getRfc());
         }
 
         Company company = mapDtoToEntity(dto);
+        Company nuevaEmpresa = empresaRepository.save(company);
 
-        return empresaRepository.save(company);
+        Departamento gen = new Departamento();
+        gen.setCodigo("GEN");
+        gen.setNombreDepartamento("General");
+        gen.setEmpresa(nuevaEmpresa);
+        departamentoRepository.save(gen);
+
+        return nuevaEmpresa;
     }
+
 
     private Company mapDtoToEntity(EmpresaRequest dto) {
         Company company = new Company();
@@ -97,25 +111,3 @@ public class EmpresaService {
     }
 }
 
-/*public class EmpresaService {
-    private EmpresaRepository empresaRepository;
-
-    public EmpresaService(EmpresaRepository empresaRepository){
-        this.empresaRepository = empresaRepository;
-    }
-
-    public Company crearEmpresa(Company company){
-        if(empresaRepository.existsByRfc(company.getRfc())){
-            throw new EmpresaExistenteException("Ya existe una empresa con el RFC:" + company.getRfc());
-        }
-        return empresaRepository.save(company);
-    }
-
-    public List<Company> obtenerEmpresa(){
-        return empresaRepository.findAll();
-    }
-
-    public Optional<Company> obtenerEmpresaPorID(Long id){
-        return empresaRepository.findById(id);
-    }
-}*/
