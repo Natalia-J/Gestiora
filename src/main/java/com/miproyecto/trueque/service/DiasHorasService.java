@@ -1,4 +1,4 @@
-package com.miproyecto.trueque.service;
+/*package com.miproyecto.trueque.service;
 
 import com.miproyecto.trueque.dto.HorasDiasRequest;
 import com.miproyecto.trueque.model.Departamento;
@@ -12,11 +12,9 @@ import com.miproyecto.trueque.repository.catalog.TipoPeriodoRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -50,8 +48,8 @@ public class DiasHorasService {
                 .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado"));
 
         Inconsistencias inconsistencia = null;
-        if (request.getInconsistencias() != null) {
-            inconsistencia = inconsistenciasRepository.findById(request.getInconsistencias())
+        if (request.getMotivoInconsistenciasId() != null) {
+            inconsistencia = inconsistenciasRepository.findById(request.getMotivoInconsistenciasId())
                     .orElseThrow(() -> new IllegalArgumentException("Inconsistencia no encontrada"));
         }
 
@@ -73,15 +71,10 @@ public class DiasHorasService {
         registro.setFecha(request.getFecha());
         registro.setHoraEntrada(request.getHoraEntrada());
         registro.setHoraSalida(request.getHoraSalida());
-        registro.setInconsistencias(inconsistencia);
+        registro.setMotivoInconsistencias(inconsistencia);
         registro.setMotivoInconsistencias(motivo);
-        registro.setTipoPeriodo(tipoPeriodo);
-        registro.setCreadoEn(LocalDateTime.now());
-        registro.setActualizadoEn(LocalDateTime.now());
+       // registro.setTipoPeriodo(tipoPeriodo);
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        registro.setCreadoPor(username);
-        registro.setActualizadoPor(username);
 
         return diasHorasRepository.save(registro);
     }
@@ -106,7 +99,7 @@ public class DiasHorasService {
 
         throw new IllegalStateException("No se encontró un periodo activo para la fecha proporcionada");
     }
-}
+}*/
 
 
 

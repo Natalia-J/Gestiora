@@ -29,5 +29,6 @@ public class CatalogsResponse {
     private List<GenericCatalogResponse> tipoJornada;
     private List<GenericCatalogResponse> baseDePago;
     private List<GenericCatalogResponse> diaSemana;
+    private List<GenericCatalogResponse> baseCotizacion;
 
 }

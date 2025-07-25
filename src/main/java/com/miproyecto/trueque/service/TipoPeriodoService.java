@@ -30,11 +30,16 @@ public class TipoPeriodoService {
 
         TipoPeriodo periodoGuardado = tipoPeriodoRepository.save(periodo);
 
-        // Asignamos el periodo activo a la empresa
         empresa.setPeriodoActivo(periodoGuardado);
         empresaRepository.save(empresa);
 
         return tipoPeriodoRepository.save(periodo);
+    }
+
+    public TipoPeriodo crearPeriodoInicialPorIdEmpresa(Long empresaId, TipoPeriodoEnum tipo, LocalDate fechaInicio) {
+        Company empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        return crearPeriodoInicial(empresa, tipo, fechaInicio);
     }
 
     public LocalDate calcularFechaFin(LocalDate fechaInicio, TipoPeriodoEnum tipo) {

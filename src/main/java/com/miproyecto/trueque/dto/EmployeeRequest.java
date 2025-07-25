@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmployeeRequest {
-    private Long empresaId;
     private String codigoEmpleado;
     private String nombre;
     private String apellidoPaterno;

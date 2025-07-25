@@ -73,7 +73,7 @@ public class Employee {
     private TipoContratoEmpleado tipoContratoEmpleado;
     @ManyToOne
     @JoinColumn(name = "tipo_periodo_id")
-    private TipoPeriodo tipoPeriodo;
+    private TipoPeriodoEmpleado tipoPeriodo;
     @ManyToOne
     @JoinColumn(name = "base_cotizacion_id")
     private BaseCotizacionEmpleado baseCotizacion;

@@ -1,28 +1,35 @@
 package com.miproyecto.trueque.dto;
 
+import com.miproyecto.trueque.model.catalogs.Inconsistencias;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class HorasDiasResponse {
     private Long id;
+
     private Long codigoEmpleado;
     private String nombreEmpleado;
 
     private Long departamentoId;
-    private String nonbreDepartamento;
+    private String nombreDepartamento;
 
     private LocalDate fecha;
     private LocalTime horaEntrada;
     private LocalTime horaSalida;
 
-    private BigDecimal horasReales;
-    private BigDecimal horasDobles;
-    private BigDecimal horasTriples;
+    private Boolean diaDescanso;
 
-    private boolean feriado;
-    private boolean descanso;
+    private Long motivoInconsistenciaId;
+    private String motivoInconsistenciaDescripcion;
+    private String comentario;
 
-    private String inconsistencias;
-    private String motivoInconsistencias;
+
 }

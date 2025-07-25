@@ -1,4 +1,4 @@
-package com.miproyecto.trueque.controller;
+/*package com.miproyecto.trueque.controller;
 
 import com.miproyecto.trueque.dto.HorasDiasRequest;
 import com.miproyecto.trueque.model.DiasHoras;
@@ -48,4 +48,4 @@ public class DiasHorasController {
         return ResponseEntity.ok(existe);
     }
 
-}
+}*/

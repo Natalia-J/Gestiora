@@ -36,7 +36,9 @@ public class DatosGeneralesSeeder {
     private final BasePagoRepository basePagoRepository;
     private final DiaSemanaRepository diaSemanaRepository;
     private final EmpresaRepository empresaRepository;
+    private final BaseCotizacionRepository baseCotizacionRepository;
     private final TipoPeriodoService tipoPeriodoService;
+    private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
 
     @PostConstruct
     public void cargarDatosGenerales() {
@@ -51,10 +53,9 @@ public class DatosGeneralesSeeder {
         cargarSindicato();
         cargarTipoContrato();
         cargarTipoCodigoEmpleado();
-        // 🟨 Obtener o crear empresa de ejemplo
         Company empresa = empresaRepository.findById(1L).orElse(null);
         if (empresa != null) {
-            cargarTipoPeriodo(empresa); // ✅ Aquí pasas la empresa
+            cargarTipoPeriodo(empresa);
         }
         cargarTipoPrestacion();
         cargarZonaSalario();
@@ -62,6 +63,8 @@ public class DatosGeneralesSeeder {
         cargarBaseDePago();
         cargarTipoJornada();
         cargarDiaSemana();
+        cargarBaseCotizacion();
+        cargarTipoPeriodoEmpleado();
     }
 
     private void cargarGeneros() {
@@ -212,6 +215,26 @@ public class DatosGeneralesSeeder {
                 BaseDePago entidad = new BaseDePago();
                 entidad.setBaseDePago(pago);
                 basePagoRepository.save(entidad);
+            }
+        }
+    }
+
+    private void cargarBaseCotizacion(){
+        if(baseCotizacionRepository.count()==0){
+            for(BaseCotizacionEnum base: BaseCotizacionEnum.values()){
+                BaseCotizacionEmpleado entidad = new BaseCotizacionEmpleado();
+                entidad.setBaseCotizacion((base));
+                baseCotizacionRepository.save(entidad);
+            }
+        }
+    }
+
+    private void cargarTipoPeriodoEmpleado(){
+        if(tipoPeriodoEmpleadoRepository.count()==0){
+            for (TipoPeriodoEmpleadoEnum tipoPeriodo: TipoPeriodoEmpleadoEnum.values()){
+                TipoPeriodoEmpleado entidad = new TipoPeriodoEmpleado();
+                entidad.setTipoPeriodoEmpleado(tipoPeriodo);
+                tipoPeriodoEmpleadoRepository.save(entidad);
             }
         }
     }

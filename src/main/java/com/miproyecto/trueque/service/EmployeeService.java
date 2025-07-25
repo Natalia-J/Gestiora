@@ -1,6 +1,7 @@
 package com.miproyecto.trueque.service;
 
 import com.miproyecto.trueque.dto.EmployeeRequest;
+import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.*;
 import com.miproyecto.trueque.model.catalogs.Direccion;
 import com.miproyecto.trueque.model.enums.CodigEmpleEnum;
@@ -32,8 +33,9 @@ public class EmployeeService {
     private final EntidadFederativaRepository entidadFederativaRepository;
     private final DireccionRepository direccionRepository;
     private final TipoContratoEmpleadoRepository tipoContratoRepository;
-    private final TipoPeriodoRepository tipoPeriodoRepository;
+    private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
     private final BaseCotizacionRepository baseCotizacionRepository;
+    private final PeriodoEmpleadoService periodoEmpleadoService;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
@@ -46,8 +48,10 @@ public class EmployeeService {
 
     @Transactional
     public Employee createEmployee(EmployeeRequest request) {
-        Company empresa = empresaRepository.findById(request.getEmpresaId())
-                .orElseThrow(() -> new IllegalArgumentException("Empresa no encontrada"));
+        Long empresaId = EmpresaContextHolder.getEmpresaId();
+
+        Company empresa = empresaRepository.findById(empresaId)
+                .orElseThrow(() -> new IllegalArgumentException("Empresa no encontrada en contexto"));
 
         validarCodigoEmpleado(
                 request.getCodigoEmpleado(),
@@ -60,6 +64,8 @@ public class EmployeeService {
         validarRFC(request.getRfc());
 
         Employee empleado = new Employee();
+
+        empleado.setEmpresa(empresa);
         empleado.setCodigoEmpleado(request.getCodigoEmpleado());
         empleado.setNombreEmpleado(request.getNombre());
         empleado.setApellidoPaternoEmpleado(request.getApellidoPaterno());
@@ -80,7 +86,7 @@ public class EmployeeService {
         empleado.setRfcEmpleado(request.getRfc());
 
         empleado.setTipoContratoEmpleado(tipoContratoRepository.findById(request.getTipoContrato()).orElse(null));
-        empleado.setTipoPeriodo(tipoPeriodoRepository.findById(request.getTipoPeriodo()).orElse(null));
+        empleado.setTipoPeriodo(tipoPeriodoEmpleadoRepository.findById(request.getTipoPeriodo()).orElse(null));
         empleado.setBaseCotizacion(baseCotizacionRepository.findById(request.getBaseCotizacion()).orElse(null));
         empleado.setDepartamentoEmple(departamentoRepository.findById(request.getDepartamento()).orElse(null));
         empleado.setPuesto(puestoRepository.findById(request.getPuesto()).orElse(null));
@@ -95,7 +101,6 @@ public class EmployeeService {
         empleado.setEntidadFederativa(entidadFederativaRepository.findById(request.getEntidadFederativa()).orElse(null));
         empleado.setBaseDePago(basePagoRepository.findById(request.getBaseDePago()).orElse(null));
 
-
         Direccion direccion = new Direccion();
         direccion.setCalleEmpresa(request.getDireccion().getCalle());
         direccion.setNumExterno(request.getDireccion().getNumExterno());
@@ -107,8 +112,19 @@ public class EmployeeService {
 
         empleado.setDireccionEmployee(direccion);
 
-        return employeeRepository.save(empleado);
+        Employee empleadoGuardado = employeeRepository.save(empleado);
+
+        if (request.getTipoPeriodo() != null && request.getFechaAlta() != null) {
+            var periodoRequest = new com.miproyecto.trueque.dto.PeriodoPagoRequest();
+            periodoRequest.setTipoPeriodoEmpleadoId(request.getTipoPeriodo());
+            periodoRequest.setFechaInicio(request.getFechaAlta());
+
+            periodoEmpleadoService.crearPeriodoPago(periodoRequest);
+        }
+
+        return empleadoGuardado;
     }
+
 
     private void validarCodigoEmpleado(String codigo, String mascarilla, CodigEmpleEnum tipoCodigo) {
         if (codigo == null || codigo.isBlank()) {

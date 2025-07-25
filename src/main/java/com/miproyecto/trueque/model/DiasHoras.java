@@ -1,14 +1,13 @@
 package com.miproyecto.trueque.model;
 
 import com.miproyecto.trueque.model.catalogs.Inconsistencias;
-import com.miproyecto.trueque.model.catalogs.TipoPeriodo;
+import com.miproyecto.trueque.model.catalogs.Justificacion;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Setter
@@ -37,57 +36,24 @@ public class DiasHoras {
     @Column(name = "hora_salida")
     private LocalTime horaSalida;
 
-
     @Column(name = "horas_trabajadas")
     private BigDecimal horasReales;
 
-    @Column(name = "horas_dobles")
-    private BigDecimal horasDobles;
+    @Column(name = "horas_extras")
+    private BigDecimal horasExtras;
 
-    @Column(name = "horas-triples")
-    private BigDecimal horasTriples;
-
-    @ManyToOne
-    @JoinColumn(name = "inconsistencias")
-    private Inconsistencias inconsistencias;
+    @Column(name = "es_dia_descanso", nullable = false)
+    private Boolean esDiaDescanso = false;
 
     @ManyToOne
     @JoinColumn(name = "motivo_inconsistencias")
     private Inconsistencias motivoInconsistencias;
 
-    @Column(name = "feriado")
-    private boolean fereado;
+    @Column(name = "comentario", columnDefinition = "TEXT")
+    private String comentario;
 
-    @Column(name = "descanso")
-    private boolean descanso;
-
-    //datos que se podrian guardar para auditoria
-    @ManyToOne
-    @JoinColumn(name = "periodo", nullable = false)
-    private TipoPeriodo tipoPeriodo;
-
-    @Column(name = "creado_en", updatable = false)
-    private LocalDateTime creadoEn;
-
-    @Column(name = "actualizado_en")
-    private LocalDateTime actualizadoEn;
-
-    @Column(name = "creado_por")
-    private String creadoPor;
-
-    @Column(name = "actualizado_por")
-    private String actualizadoPor;
-
-
-    @PrePersist
-    public void prePersist() {
-        this.creadoEn = LocalDateTime.now();
-        this.actualizadoEn = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.actualizadoEn = LocalDateTime.now();
-    }
+    @OneToMany
+    @JoinColumn(name = "justificacion_id")
+    private Justificacion justificacion;
 
 }

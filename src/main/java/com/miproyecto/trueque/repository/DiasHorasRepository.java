@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DiasHorasRepository extends JpaRepository<DiasHoras, Long> {
-    List<DiasHoras> findByEmpleadoIdAndFechaBetween(Long empleadoId, LocalDate inicio, LocalDate fin);
-    List<DiasHoras> findByEmpleadoId(Long empleadoId);
     List<DiasHoras> findByTipoPeriodoId(Long tipoPeriodoId);
+    List<DiasHoras> findByEmpleadoCodigo(String codigoEmpleado);
     boolean existsByFechaAndEmpleadoId(LocalDate fecha, Long empleadoId);
+    List<DiasHoras> findByEmpleadoDepartamentoIdAndEmpleadoId(Long departamentoId, Long empleadoId);
 }
