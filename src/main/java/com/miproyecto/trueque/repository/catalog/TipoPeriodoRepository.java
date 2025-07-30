@@ -14,6 +14,4 @@ import java.util.Optional;
 public interface TipoPeriodoRepository extends JpaRepository<TipoPeriodo, Long> {
     @Query("SELECT new com.miproyecto.trueque.dto.GenericCatalogResponse(ti.id, CAST(ti.periodo as string)) FROM TipoPeriodo ti")
     List<GenericCatalogResponse> getAllTipoPeriodo();
-    List<TipoPeriodo> findByEmpresaOrderByFechaInicioPeriodoDesc(Company empresa);
-    Optional<TipoPeriodo> findTopByEmpresaAndCerradoFalse(Company empresa);
 }

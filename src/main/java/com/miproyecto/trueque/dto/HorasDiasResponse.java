@@ -16,10 +16,7 @@ public class HorasDiasResponse {
     private Long id;
 
     private Long codigoEmpleado;
-    private String nombreEmpleado;
-
     private Long departamentoId;
-    private String nombreDepartamento;
 
     private LocalDate fecha;
     private LocalTime horaEntrada;

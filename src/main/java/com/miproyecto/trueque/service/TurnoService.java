@@ -115,7 +115,7 @@ public class TurnoService {
                 .map(this::mapearATurnoResponse);
     }
 
-    private TurnoResponse mapearATurnoResponse(Turno turno) {
+    public TurnoResponse mapearATurnoResponse(Turno turno) {
         TurnoResponse response = new TurnoResponse();
         response.setNombreTurno(turno.getNombre());
         response.setHoraEntrada(turno.getHoraEntrada());

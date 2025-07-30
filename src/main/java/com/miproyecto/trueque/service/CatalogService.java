@@ -33,6 +33,8 @@ public class CatalogService {
     private BasePagoRepository basePagoRepository;
     private DiaSemanaRepository diaSemanaRepository;
     private BaseCotizacionRepository baseCotizacionRepository;
+    private InconsistenciasRepository inconsistenciasRepository;
+    private JustificacionRepository justificacionRepository;
 
     public CatalogService(IMSSEmployeeRepository imssEmployeeRepository, SBCEmpleadoRepository sbcEmpleadoRepository,
                           EntidadFederativaRepository entidadFederativaRepository, EstadoCivilRepository estadoCivilRepository,
@@ -40,7 +42,8 @@ public class CatalogService {
                           RegimenEmpresaRepository regimenEmpresaRepository, SindicatoEmpleadoRepository sindicatoEmpleadoRepository, TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository,
                           TipoContratoEmpleadoRepository tipoContratoEmpleadoRepository, TipoPeriodoRepository tipoPeriodoRepository,
                           TipoPrestacionRepository tipoPrestacionRepository, ZonaSalarioRepository zonaSalarioRepository, TipoJornadaRepository tipoJornadaRepository,
-                          BasePagoRepository basePagoRepository, DiaSemanaRepository diaSemanaRepository, BaseCotizacionRepository baseCotizacionRepository){
+                          BasePagoRepository basePagoRepository, DiaSemanaRepository diaSemanaRepository, BaseCotizacionRepository baseCotizacionRepository, InconsistenciasRepository inconsistenciasRepository,
+                          JustificacionRepository justificacionRepository) {
         this.imssEmployeeRepository = imssEmployeeRepository;
         this.sbcEmpleadoRepository = sbcEmpleadoRepository;
         this.entidadFederativaRepository = entidadFederativaRepository;
@@ -59,6 +62,8 @@ public class CatalogService {
         this.basePagoRepository = basePagoRepository;
         this.diaSemanaRepository = diaSemanaRepository;
         this.baseCotizacionRepository = baseCotizacionRepository;
+        this.inconsistenciasRepository = inconsistenciasRepository;
+        this.justificacionRepository = justificacionRepository;
     }
 
     public CatalogsResponse getAllCatalogs(){
@@ -154,8 +159,18 @@ public class CatalogService {
                         r.getId(),
                         r.getBaseCotizacion().getDescription()
                 )).collect(Collectors.toList());
+        List<GenericCatalogResponse> inconsistencia = inconsistenciasRepository.findAll()
+                .stream().map(r->new GenericCatalogResponse(
+                        r.getId(),
+                        r.getInconsistencias().getDescripcion()
+                )).collect(Collectors.toList());
+        List<GenericCatalogResponse> justificacion = justificacionRepository.findAll()
+                .stream().map(r->new GenericCatalogResponse(
+                        r.getId(),
+                        r.getJustificacion().getDescripcion()
+                )).collect(Collectors.toList());
 
-        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoCodigo, tipoContrato, tipoPeriodo, tipoPrestacion, zonaSalario, tipoJornada, baseDePago, diaSemana, baseCotizacion);
+        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoCodigo, tipoContrato, tipoPeriodo, tipoPrestacion, zonaSalario, tipoJornada, baseDePago, diaSemana, baseCotizacion, inconsistencia, justificacion);
 
     }
 

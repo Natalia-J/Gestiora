@@ -1,17 +1,17 @@
 package com.miproyecto.trueque.dto;
 
-import lombok.AllArgsConstructor;
+import com.miproyecto.trueque.model.catalogs.TipoPeriodo;
+import com.miproyecto.trueque.model.enums.TipoPeriodoEnum;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class PeriodoPagoResponse {
+@RequiredArgsConstructor
+public class PeriodoEmpresaResponse {
     private Long periodoId;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;

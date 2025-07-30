@@ -21,18 +21,4 @@ public class TipoPeriodo {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoPeriodoEnum periodo;
-
-    @Column(name = "fecha_inicio_periodo", nullable = false)
-    private LocalDate fechaInicioPeriodo;
-
-    @Column(name = "fecha_fin_periodo", nullable = false)
-    private LocalDate fechaFinPeriodo;
-
-    @Column(nullable = false)
-    private boolean cerrado = false;
-
-    @ManyToOne
-    @JoinColumn(name = "empresa_id", nullable = false)
-    @JsonBackReference
-    private Company empresa;
 }

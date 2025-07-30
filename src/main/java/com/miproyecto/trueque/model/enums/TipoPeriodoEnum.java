@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum TipoPeriodoEnum {
-    QUINCENAL("Quincenal"),
     MENSUAL("Mensual"),
     SEMESTRAL("Semestral"),
     TRIMESTRAL("Trimestral"),

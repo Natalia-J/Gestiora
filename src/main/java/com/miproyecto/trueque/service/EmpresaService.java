@@ -2,18 +2,22 @@ package com.miproyecto.trueque.service;
 
 import com.miproyecto.trueque.dto.DireccionRequest;
 import com.miproyecto.trueque.dto.EmpresaRequest;
+import com.miproyecto.trueque.dto.PeriodoEmpresaRequest;
 import com.miproyecto.trueque.exception.EmpresaExistenteException;
 import com.miproyecto.trueque.model.Company;
 import com.miproyecto.trueque.model.Departamento;
 import com.miproyecto.trueque.model.catalogs.Direccion;
+import com.miproyecto.trueque.model.catalogs.TipoPeriodo;
 import com.miproyecto.trueque.repository.DepartamentoRepository;
 import com.miproyecto.trueque.repository.EmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.RegimenEmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.TipoCodigoEmpleadoRepository;
+import com.miproyecto.trueque.repository.catalog.TipoPeriodoRepository;
 import com.miproyecto.trueque.repository.catalog.ZonaSalarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +28,15 @@ public class EmpresaService {
     private ZonaSalarioRepository zonaSalarioRepository;
     private TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository;
     private RegimenEmpresaRepository regimenEmpresaRepository;
+    private TipoPeriodoRepository tipoPeriodoRepository;
 
-    public EmpresaService(EmpresaRepository empresaRepository, ZonaSalarioRepository zonaSalarioRepository, TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository, RegimenEmpresaRepository regimenEmpresaRepository, DepartamentoRepository departamentoRepository){
+    public EmpresaService(EmpresaRepository empresaRepository, ZonaSalarioRepository zonaSalarioRepository, TipoCodigoEmpleadoRepository tipoCodigoEmpleadoRepository, RegimenEmpresaRepository regimenEmpresaRepository, DepartamentoRepository departamentoRepository, TipoPeriodoRepository tipoPeriodoRepository) {
         this.empresaRepository = empresaRepository;
         this.zonaSalarioRepository = zonaSalarioRepository;
         this.tipoCodigoEmpleadoRepository = tipoCodigoEmpleadoRepository;
         this.regimenEmpresaRepository = regimenEmpresaRepository;
         this.departamentoRepository=departamentoRepository;
+        this.tipoPeriodoRepository = tipoPeriodoRepository;
     }
 
     @Transactional
@@ -83,6 +89,8 @@ public class EmpresaService {
                 regimenEmpresaRepository.findById(dto.getRegimenFiscalCompanyId())
                         .orElseThrow(() -> new RuntimeException("Régimen fiscal no encontrado"))
         );
+
+
 
         company.setDireccionCompany(DireccionRequestToDireccion(dto.getDireccionCompany()));
 

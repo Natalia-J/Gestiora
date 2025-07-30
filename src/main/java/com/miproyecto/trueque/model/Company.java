@@ -56,7 +56,7 @@ public class Company {
     private RegimenFiscal regimenFiscalCompany;
 
     @OneToOne
-    @JoinColumn(name = "periodo_activo_id")
+    @JoinColumn(name = "tipo_periodo_id")
     @JsonManagedReference
-    private TipoPeriodo periodoActivo;
+    private TipoPeriodo tipoPeriodo;
 }

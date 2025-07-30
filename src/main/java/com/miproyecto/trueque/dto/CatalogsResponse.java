@@ -30,5 +30,7 @@ public class CatalogsResponse {
     private List<GenericCatalogResponse> baseDePago;
     private List<GenericCatalogResponse> diaSemana;
     private List<GenericCatalogResponse> baseCotizacion;
+    private List<GenericCatalogResponse> inconsistencias;
+    private List<GenericCatalogResponse> justificacion;
 
 }

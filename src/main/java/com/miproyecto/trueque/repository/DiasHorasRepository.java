@@ -10,8 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface DiasHorasRepository extends JpaRepository<DiasHoras, Long> {
-    List<DiasHoras> findByTipoPeriodoId(Long tipoPeriodoId);
-    List<DiasHoras> findByEmpleadoCodigo(String codigoEmpleado);
-    boolean existsByFechaAndEmpleadoId(LocalDate fecha, Long empleadoId);
-    List<DiasHoras> findByEmpleadoDepartamentoIdAndEmpleadoId(Long departamentoId, Long empleadoId);
+    List<DiasHoras> findByEmpleadoId(Long empleadoId);
 }

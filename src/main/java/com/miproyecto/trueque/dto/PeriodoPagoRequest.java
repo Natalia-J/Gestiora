@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PeriodoPagoRequest {
-    private Long tipoPeriodoEmpleadoId;
+    private Long tipoPeriodoId;
     private LocalDate fechaInicio;
-
 }

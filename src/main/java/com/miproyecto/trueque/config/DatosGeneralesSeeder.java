@@ -5,8 +5,6 @@ import com.miproyecto.trueque.model.catalogs.*;
 import com.miproyecto.trueque.model.enums.*;
 import com.miproyecto.trueque.repository.EmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.*;
-import com.miproyecto.trueque.service.EmpresaService;
-import com.miproyecto.trueque.service.TipoPeriodoService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,10 +33,10 @@ public class DatosGeneralesSeeder {
     private final TipoJornadaRepository tipoJornadaRepository;
     private final BasePagoRepository basePagoRepository;
     private final DiaSemanaRepository diaSemanaRepository;
-    private final EmpresaRepository empresaRepository;
     private final BaseCotizacionRepository baseCotizacionRepository;
-    private final TipoPeriodoService tipoPeriodoService;
     private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
+    private final InconsistenciasRepository inconsistenciasRepository;
+    private final JustificacionRepository justificacionRepository;
 
     @PostConstruct
     public void cargarDatosGenerales() {
@@ -53,10 +51,7 @@ public class DatosGeneralesSeeder {
         cargarSindicato();
         cargarTipoContrato();
         cargarTipoCodigoEmpleado();
-        Company empresa = empresaRepository.findById(1L).orElse(null);
-        if (empresa != null) {
-            cargarTipoPeriodo(empresa);
-        }
+        cargarTipoPeriodoEmpresa();
         cargarTipoPrestacion();
         cargarZonaSalario();
         cargarTipoJornada();
@@ -65,6 +60,8 @@ public class DatosGeneralesSeeder {
         cargarDiaSemana();
         cargarBaseCotizacion();
         cargarTipoPeriodoEmpleado();
+        cargarInconsistencias();
+        cargarJustificacion();
     }
 
     private void cargarGeneros() {
@@ -180,10 +177,12 @@ public class DatosGeneralesSeeder {
         }
     }
 
-    private void cargarTipoPeriodo(Company empresa) {
-        if (tipoPeriodoRepository.count() == 0) {
-            for (TipoPeriodoEnum periodo : TipoPeriodoEnum.values()) {
-                tipoPeriodoService.crearPeriodoInicial(empresa, periodo, LocalDate.now());
+    public void cargarTipoPeriodoEmpresa() {
+        if(tipoPeriodoRepository.count() == 0) {
+            for (TipoPeriodoEnum tipo : TipoPeriodoEnum.values()) {
+                TipoPeriodo entidad = new TipoPeriodo();
+                entidad.setPeriodo(tipo);
+                tipoPeriodoRepository.save(entidad);
             }
         }
     }
@@ -243,15 +242,15 @@ public class DatosGeneralesSeeder {
         if(tipoJornadaRepository.count() == 0){
             TipoJornada diurna = new TipoJornada();
             diurna.setTipoJornada(TipoJornadaEnum.DIURNA);
-            diurna.setHoraInicio(LocalTime.of(6, 0));      // 06:00
-            diurna.setHoraFin(LocalTime.of(20, 0));        // 20:00
+            diurna.setHoraInicio(LocalTime.of(6, 0));
+            diurna.setHoraFin(LocalTime.of(20, 0));
             diurna.setDuracionMaxima(8.0);
             tipoJornadaRepository.save(diurna);
 
             TipoJornada nocturna = new TipoJornada();
             nocturna.setTipoJornada(TipoJornadaEnum.NOCTURNA);
-            nocturna.setHoraInicio(LocalTime.of(20, 0));   // 20:00
-            nocturna.setHoraFin(LocalTime.of(6, 0));       // 06:00
+            nocturna.setHoraInicio(LocalTime.of(20, 0));
+            nocturna.setHoraFin(LocalTime.of(6, 0));
             nocturna.setDuracionMaxima(7.0);
             tipoJornadaRepository.save(nocturna);
 
@@ -270,6 +269,26 @@ public class DatosGeneralesSeeder {
                 DiaSemana entidad= new DiaSemana();
                 entidad.setDiaSemana(dia);
                 diaSemanaRepository.save(entidad);
+            }
+        }
+    }
+
+    private void cargarInconsistencias(){
+        if(inconsistenciasRepository.count()==0){
+            for(InconsistenciasEnum inconsistencias: InconsistenciasEnum.values()){
+                Inconsistencias entidad = new Inconsistencias();
+                entidad.setInconsistencias(inconsistencias);
+                inconsistenciasRepository.save(entidad);
+            }
+        }
+    }
+
+    private void cargarJustificacion(){
+        if(justificacionRepository.count()==0){
+            for(JustificacionEnum justificacion: JustificacionEnum.values()){
+                Justificacion entidad = new Justificacion();
+                entidad.setJustificacion(justificacion);
+                justificacionRepository.save(entidad);
             }
         }
     }

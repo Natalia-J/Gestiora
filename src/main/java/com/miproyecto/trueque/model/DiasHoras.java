@@ -2,9 +2,11 @@ package com.miproyecto.trueque.model;
 
 import com.miproyecto.trueque.model.catalogs.Inconsistencias;
 import com.miproyecto.trueque.model.catalogs.Justificacion;
+import com.miproyecto.trueque.model.catalogs.PeriodoPago;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +29,8 @@ public class DiasHoras {
     @JoinColumn(name = "empleado", nullable = false)
     private Employee empleado;
 
+    /////////////////////////////////////////////////////////////
+
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
@@ -39,11 +43,8 @@ public class DiasHoras {
     @Column(name = "horas_trabajadas")
     private BigDecimal horasReales;
 
-    @Column(name = "horas_extras")
-    private BigDecimal horasExtras;
-
     @Column(name = "es_dia_descanso", nullable = false)
-    private Boolean esDiaDescanso = false;
+    private Boolean esDiaDescanso;
 
     @ManyToOne
     @JoinColumn(name = "motivo_inconsistencias")
@@ -52,8 +53,15 @@ public class DiasHoras {
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "justificacion_id")
     private Justificacion justificacion;
 
+    @ManyToOne
+    @JoinColumn(name = "empleado_id")
+    private Employee empleadoId;
+
+    @ManyToOne
+    @JoinColumn(name = "periodo_activo_id")
+    private PeriodoPago periodoActivo;
 }

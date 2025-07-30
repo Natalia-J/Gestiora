@@ -9,11 +9,8 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HorasDiasRequest {
-    private String horaEntrada;
-    private String horaSaida;
-    private Long inconsistencia;
-    private String comentario;
-    private Long justificacion;
-
+public class BusquedaDatosRequest {
+    private String codigoEmpleado;
+    private Long departamentoId;
+    private Long empleadoId;
 }

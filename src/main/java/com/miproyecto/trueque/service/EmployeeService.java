@@ -4,6 +4,7 @@ import com.miproyecto.trueque.dto.EmployeeRequest;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.*;
 import com.miproyecto.trueque.model.catalogs.Direccion;
+import com.miproyecto.trueque.model.catalogs.PeriodoPago;
 import com.miproyecto.trueque.model.enums.CodigEmpleEnum;
 import com.miproyecto.trueque.repository.*;
 import com.miproyecto.trueque.repository.catalog.*;
@@ -35,7 +36,6 @@ public class EmployeeService {
     private final TipoContratoEmpleadoRepository tipoContratoRepository;
     private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
     private final BaseCotizacionRepository baseCotizacionRepository;
-    private final PeriodoEmpleadoService periodoEmpleadoService;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
@@ -113,14 +113,6 @@ public class EmployeeService {
         empleado.setDireccionEmployee(direccion);
 
         Employee empleadoGuardado = employeeRepository.save(empleado);
-
-        if (request.getTipoPeriodo() != null && request.getFechaAlta() != null) {
-            var periodoRequest = new com.miproyecto.trueque.dto.PeriodoPagoRequest();
-            periodoRequest.setTipoPeriodoEmpleadoId(request.getTipoPeriodo());
-            periodoRequest.setFechaInicio(request.getFechaAlta());
-
-            periodoEmpleadoService.crearPeriodoPago(periodoRequest);
-        }
 
         return empleadoGuardado;
     }

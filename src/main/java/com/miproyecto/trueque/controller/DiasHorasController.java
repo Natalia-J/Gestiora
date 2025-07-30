@@ -1,51 +1,27 @@
-/*package com.miproyecto.trueque.controller;
+package com.miproyecto.trueque.controller;
 
-import com.miproyecto.trueque.dto.HorasDiasRequest;
-import com.miproyecto.trueque.model.DiasHoras;
+import com.miproyecto.trueque.dto.BusquedaDatosRequest;
+import com.miproyecto.trueque.dto.BusquedaDatosResponse;
 import com.miproyecto.trueque.service.DiasHorasService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/dias-horas")
+@RequiredArgsConstructor
 public class DiasHorasController {
 
     private final DiasHorasService diasHorasService;
 
-    public DiasHorasController(DiasHorasService diasHorasService){
-        this.diasHorasService=diasHorasService;
-    }
-
-    @PostMapping
-    public ResponseEntity<?> crearRegistro(@Valid @RequestBody HorasDiasRequest request) {
+    @PostMapping("/buscar")
+    public ResponseEntity<BusquedaDatosResponse> busquedaDatos(@RequestBody BusquedaDatosRequest request){
         try {
-            DiasHoras registro = diasHorasService.registrarDiaHora(request);
-            return ResponseEntity.ok(registro);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error interno del servidor");
+            BusquedaDatosResponse response = diasHorasService.buscarDatos(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex) {
+            System.err.println("Error en service: " + ex.getMessage());
+            return  ResponseEntity.badRequest().body(null);
         }
     }
-
-    @GetMapping("/periodo/{tipoPeriodoId}")
-    public ResponseEntity<List<DiasHoras>> obtenerRegistrosPorPeriodo(@PathVariable Long tipoPeriodoId) {
-        List<DiasHoras> registros = diasHorasService.obtenerRegistrosPorPeriodo(tipoPeriodoId);
-        return ResponseEntity.ok(registros);
-    }
-
-    @GetMapping("/existe")
-    public ResponseEntity<Boolean> existeRegistro(
-            @RequestParam Long empleadoId,
-            @RequestParam String fecha) {
-        LocalDate fechaConsulta = LocalDate.parse(fecha);
-        boolean existe = diasHorasService.verificarSiExisteRegistro(empleadoId, fechaConsulta);
-        return ResponseEntity.ok(existe);
-    }
-
-}*/
+}

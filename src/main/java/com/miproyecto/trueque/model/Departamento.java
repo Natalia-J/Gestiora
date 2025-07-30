@@ -11,13 +11,13 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "departamento")
+@Table(name = "departamento", uniqueConstraints = @UniqueConstraint(columnNames = {"empresa_id", "codigo"}))
 public class Departamento {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(unique = true, nullable = false)
+        @Column(nullable = false)
         private String codigo;
 
         @Column(name = "nombre", nullable = false)
@@ -27,7 +27,7 @@ public class Departamento {
         @JsonManagedReference
         private List<Employee> empleados;
 
-        @ManyToOne
+        @ManyToOne(optional = false)
         @JoinColumn(name = "empresa_id", nullable = false)
         private Company empresa;
 }

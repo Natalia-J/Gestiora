@@ -98,7 +98,7 @@ public class InconsistenciasService {
 
     private void manejarOmisiones(DiasHoras r) {
         r.setComentario(InconsistenciasEnum.OMISION_ENTRADA_O_SALIDA.getDescripcion());
-        if (r.getHoraEntrada() == null) r.setHoraEntrada(LocalTime.of(9, 0)); // ejemplo
+        if (r.getHoraEntrada() == null) r.setHoraEntrada(LocalTime.of(9, 0));
         if (r.getHoraSalida() == null) r.setHoraSalida(LocalTime.of(18, 0));
     }
 

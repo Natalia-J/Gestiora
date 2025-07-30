@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @Entity
-@Table(name = "periodo_pago")
+@Table(name = "periodos_creados_empleado")
 public class PeriodoPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class PeriodoPago {
     private Company empresa;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "tipo_periodo_empleado_id")
+    @JoinColumn(name = "tipo_periodo_id")
     private TipoPeriodoEmpleado tipoPeriodoEmpleado;
 
     @Column(name = "fecha_inicio", nullable = false)
@@ -32,7 +32,7 @@ public class PeriodoPago {
     @Column(name = "fecha_fin", nullable = false)
     private LocalDate fechaFin;
 
-    @Column(nullable = false)
-    private boolean cerrado = false;
+    @Column(name = "estado", nullable = false)
+    private boolean estado;
 
 }
