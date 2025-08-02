@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
         return construccionRespuesta("Correo en uso", existente.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> runTimeExceptionHandler(RuntimeException existente){
+        return construccionRespuesta("Correo en uso", existente.getMessage(), HttpStatus.CONFLICT);
+    }
+
+
     @ExceptionHandler(UsuarioYaRegistradoException.class)
     public ResponseEntity<ErrorResponse> usuarioYaExistente(UsuarioYaRegistradoException existente){
         return construccionRespuesta("Usuario en uso", existente.getMessage(), HttpStatus.CONFLICT);

@@ -6,7 +6,8 @@ public abstract class PublicRoutes {
     public static List<String> obtenerRutas() {
         return List.of(
                 "/api/clients/register",
-                "/api/clients/login"
+                "/api/clients/login",
+                "/api/prenomina/export/pdf/**"
         );
     }
     public static List<String> rutasSinEmpresa() {

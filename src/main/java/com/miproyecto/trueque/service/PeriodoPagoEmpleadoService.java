@@ -4,10 +4,12 @@ import com.miproyecto.trueque.dto.PeriodoPagoRequest;
 import com.miproyecto.trueque.dto.PeriodoPagoResponse;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.Company;
+import com.miproyecto.trueque.model.Employee;
 import com.miproyecto.trueque.model.catalogs.PeriodoPago;
 import com.miproyecto.trueque.model.catalogs.PeriodosCreadosEmpresa;
 import com.miproyecto.trueque.model.catalogs.TipoPeriodoEmpleado;
 import com.miproyecto.trueque.model.enums.TipoPeriodoEmpleadoEnum;
+import com.miproyecto.trueque.repository.EmployeeRepository;
 import com.miproyecto.trueque.repository.EmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpleadoRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpresaRepository;
@@ -27,6 +29,8 @@ public class PeriodoPagoEmpleadoService {
     private final PeriodosCreadosEmpresaRepository periodosEmpresaRepository;
     private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
     private final PeriodosCreadosEmpleadoRepository periodosCreadosEmpleadoRepository;
+    private final DiasHorasService diasHorasService;
+    private final EmployeeRepository employeeRepository;
 
     public List<PeriodoPagoResponse> generarPeriodosPago(List<PeriodoPagoRequest> solicitudes) {
         Long empresaId = EmpresaContextHolder.getEmpresaId();
@@ -73,6 +77,15 @@ public class PeriodoPagoEmpleadoService {
         actualizarEstadoPeriodos(periodosCreados);
 
         List<PeriodoPago> guardados = periodosCreadosEmpleadoRepository.saveAll(periodosCreados);
+        for (PeriodoPago periodo : guardados) {
+            if (periodo.isEstado()) {
+                List<Employee> empleados = employeeRepository.findByEmpresa_Id(empresaId);
+                for (Employee empleado : empleados) {
+                    diasHorasService.generarDiasParaPeriodoEmpleado(empleado.getId(), periodo.getId());
+                }
+            }
+        }
+
         return guardados.stream().map(this::toResponse).toList();
     }
 

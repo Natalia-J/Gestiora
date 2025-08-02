@@ -3,15 +3,15 @@ package com.miproyecto.trueque.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
+import java.time.LocalTime;
+
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class BusquedaDatosRequest {
-    private String codigoEmpleado;
-    private Long departamentoId;
+@AllArgsConstructor
+public class RegistroTablaRequest {
+    private Long fechaId;
     private Long empleadoId;
-    private Long periodoId;
+    private LocalTime horaEntrada;
+    private LocalTime horaSalida;
 }

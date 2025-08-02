@@ -114,4 +114,14 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "entidad_federativa_id")
     private EntidadFederativa entidadFederativa;
+
+
+
+    public String getNombreCompleto() {
+        StringBuilder sb = new StringBuilder();
+        if (nombreEmpleado != null) sb.append(nombreEmpleado).append(" ");
+        if (apellidoPaternoEmpleado != null) sb.append(apellidoPaternoEmpleado).append(" ");
+        if (apellidoMaternoEmpleado != null) sb.append(apellidoMaternoEmpleado);
+        return sb.toString().trim(); // Quita espacios extra si faltan partes
+    }
 }

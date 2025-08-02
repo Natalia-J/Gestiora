@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -18,8 +17,8 @@ public class BusquedaDatosResponse {
     private Long empleadoId;
 
     private TurnoResponse turno;
-    private Long periodos;
+    private PeriodoEnRegistroResponse periodo;
 
-    private LocalDate fecha;
+    private List<RegistrosDiaResponse> registros;
 
 }

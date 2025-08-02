@@ -14,8 +14,7 @@ public enum InconsistenciasEnum {
     PERMISO_SIN_GOCE("El empleado no asistió, pero tenía permiso (sin goce de sueldo)."),
     ERROR_DE_REGISTRO("No se capturó correctamente entrada o salida."),
     DIA_FESTIVO_TRABAJADO("El empleado trabajó en día feriado."),
-    DIA_DE_DESCANSO_LABORADO("El empleado trabajó en su día de descanso."),
-    OMISION_ENTRADA_O_SALIDA("No se registró la entrada o la salida (pero sí se trabajó).");
+    DIA_DE_DESCANSO_LABORADO("El empleado trabajó en su día de descanso.");
 
     private final String descripcion;
 }

@@ -5,6 +5,7 @@ import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.*;
 import com.miproyecto.trueque.model.catalogs.Direccion;
 import com.miproyecto.trueque.model.catalogs.PeriodoPago;
+import com.miproyecto.trueque.model.catalogs.TipoPeriodoEmpleado;
 import com.miproyecto.trueque.model.enums.CodigEmpleEnum;
 import com.miproyecto.trueque.repository.*;
 import com.miproyecto.trueque.repository.catalog.*;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -36,6 +38,8 @@ public class EmployeeService {
     private final TipoContratoEmpleadoRepository tipoContratoRepository;
     private final TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
     private final BaseCotizacionRepository baseCotizacionRepository;
+    private final DiasHorasService diasHorasService;
+    private final PeriodosCreadosEmpleadoRepository periodosCreadosEmpleadoRepository;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
@@ -114,6 +118,24 @@ public class EmployeeService {
 
         Employee empleadoGuardado = employeeRepository.save(empleado);
 
+        if (request.getTipoPeriodo() != null) {
+            TipoPeriodoEmpleado tipoPeriodoNuevo = tipoPeriodoEmpleadoRepository
+                    .findById(request.getTipoPeriodo())
+                    .orElseThrow(() -> new IllegalArgumentException("Tipo de periodo no encontrado"));
+
+            empleadoGuardado.setTipoPeriodo(tipoPeriodoNuevo);
+            employeeRepository.save(empleadoGuardado);
+        }
+
+        PeriodoPago periodoPago = periodosCreadosEmpleadoRepository
+                .findFirstByEmpresaIdAndEstadoTrueAndTipoPeriodoEmpleadoIdOrderByFechaInicioDesc(
+                        empleado.getEmpresa().getId(),
+                        empleado.getTipoPeriodo().getId()
+                )
+                .orElseThrow(() -> new RuntimeException("No se encontró un periodo activo para el tipo de periodo del empleado"));
+
+        diasHorasService.generarDiasParaPeriodoEmpleado(empleadoGuardado.getId(), periodoPago.getId());
+
         return empleadoGuardado;
     }
 
@@ -171,6 +193,7 @@ public class EmployeeService {
     public boolean existenEmpleadosEnDepartamento(Long departamentoId) {
         return employeeRepository.existsByDepartamentoEmple_Id(departamentoId);
     }
+
 
     @Transactional
     public void moverEmpleadoADepartamento(Long empleadoId, Long nuevoDepartamentoId) {

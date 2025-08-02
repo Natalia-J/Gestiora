@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -26,7 +27,7 @@ public class DiasHoras {
     private Departamento departamento;
 
     @ManyToOne
-    @JoinColumn(name = "empleado", nullable = false)
+    @JoinColumn(name = "empleado_id", nullable = false)
     private Employee empleado;
 
     /////////////////////////////////////////////////////////////
@@ -53,15 +54,18 @@ public class DiasHoras {
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
-    @ManyToOne
-    @JoinColumn(name = "justificacion_id")
-    private Justificacion justificacion;
-
-    @ManyToOne
-    @JoinColumn(name = "empleado_id")
-    private Employee empleadoId;
+    @Column(name = "horas_extras")
+    private BigDecimal horasExtras;
 
     @ManyToOne
     @JoinColumn(name = "periodo_activo_id")
     private PeriodoPago periodoActivo;
+
+    public double getHorasTrabajadas() {
+        if (horaEntrada == null || horaSalida == null) {
+            return 0;
+        }
+        Duration duracion = Duration.between(horaEntrada, horaSalida);
+        return duracion.toMinutes() / 60.0;
+    }
 }
