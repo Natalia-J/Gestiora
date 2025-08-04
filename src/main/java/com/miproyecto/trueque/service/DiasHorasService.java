@@ -25,10 +25,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -67,15 +64,20 @@ public class DiasHorasService {
                 .filter(dh -> dh.getPeriodoActivo().getId().equals(periodo.getId()))
                 .toList();
 
-        List<RegistrosDiaResponse> registros = diasHorasList.stream()
+        List<RegistrosDiaResponse> registros = new ArrayList<>(diasHorasList.stream()
                 .map(dh -> new RegistrosDiaResponse(
+                        dh.getComentario(),
+                        dh.getEsDiaDescanso(),
                         dh.getFecha(),
                         dh.getHoraEntrada() != null ? dh.getHoraEntrada() : null,
                         dh.getHoraSalida() != null ? dh.getHoraSalida() : null,
                         dh.getHorasReales() != null ? dh.getHorasReales().toPlainString() : null,
-                        dh.getMotivoInconsistencias() != null ? dh.getMotivoInconsistencias().getInconsistencias().name() : null
+                        dh.getMotivoInconsistencias() != null ? dh.getMotivoInconsistencias().getId() : null
                 ))
-                .toList();
+                .toList());
+
+// Ordenar registros por fecha (ascendente, nulls al final)
+        registros.sort(Comparator.comparing(RegistrosDiaResponse::getFecha, Comparator.nullsLast(Comparator.naturalOrder())));
 
         TurnoResponse turnoResponse = null;
         if (empleado.getTurno() != null) {
@@ -88,15 +90,15 @@ public class DiasHorasService {
                 periodo.getFechaFin()
         );
 
-
         return new BusquedaDatosResponse(
                 empleado.getCodigoEmpleado(),
                 empleado.getDepartamentoEmple().getId(),
                 empleado.getId(),
                 turnoResponse,
                 periodoResponse,
-                registros
+                registros // ← Aquí ya pasas la lista ordenada
         );
+
 
     }
 

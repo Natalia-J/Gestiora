@@ -1,17 +1,23 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.PeriodoEmpleadoResponseBin;
 import com.miproyecto.trueque.dto.PeriodoEmpresaResponse;
 import com.miproyecto.trueque.model.Company;
+import com.miproyecto.trueque.model.catalogs.PeriodoPago;
 import com.miproyecto.trueque.model.catalogs.PeriodosCreadosEmpresa;
 import com.miproyecto.trueque.model.catalogs.TipoPeriodo;
 import com.miproyecto.trueque.model.enums.TipoPeriodoEnum;
 import com.miproyecto.trueque.repository.EmpresaRepository;
+import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpleadoRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.TipoPeriodoRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -21,6 +27,24 @@ public class PeriodoEmpresaService {
     private final PeriodosCreadosEmpresaRepository periodosRepository;
     private final TipoPeriodoRepository tipoPeriodoRepository;
     private final EmpresaRepository empresaRepository;
+    private final PeriodosCreadosEmpleadoRepository periodosCreadosEmpleadoRepository;
+
+
+    public List<PeriodoEmpleadoResponseBin> getPeriodoEmpresas(Long empresaId) {
+        List<PeriodoPago> periodoPagos = periodosCreadosEmpleadoRepository.findAllByEmpresa_IdAndEstadoTrue(empresaId);
+        List<PeriodoEmpleadoResponseBin> periodoEmpresas = new ArrayList<>();
+
+        for (PeriodoPago periodoPago : periodoPagos) {
+            PeriodoEmpleadoResponseBin periodoEmpleadoResponseBin = new PeriodoEmpleadoResponseBin();
+            periodoEmpleadoResponseBin.setId(periodoPago.getId());
+            periodoEmpleadoResponseBin.setRangoFechas(periodoPago.getFechaInicio() + " - " + periodoPago.getFechaFin());
+
+            periodoEmpresas.add(periodoEmpleadoResponseBin);
+        }
+
+        return periodoEmpresas;
+    }
+
 
     public PeriodosCreadosEmpresa crearOActualizarPeriodo(Long empresaId, Long tipoPeriodoId, LocalDate fechaInicio) {
         Company empresa = empresaRepository.findById(empresaId)

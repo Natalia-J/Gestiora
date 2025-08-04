@@ -11,9 +11,11 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistrosDiaResponse {
+    private String comentario;
+    private boolean esDiaDescanso;
     private LocalDate fecha;
     private LocalTime horaEntrada;
     private LocalTime horaSalida;
     private String horasTrabajadas;
-    private String incosistencia;
+    private Long inconsistencia;
 }

@@ -1,9 +1,11 @@
 package com.miproyecto.trueque.controller;
 
+import com.miproyecto.trueque.dto.EmpleadoResponse;
 import com.miproyecto.trueque.dto.EmployeeRequest;
 import com.miproyecto.trueque.dto.MoverEmpleadoRequest;
 import com.miproyecto.trueque.model.Employee;
 import com.miproyecto.trueque.service.EmployeeService;
+import com.miproyecto.trueque.service.PeriodoPagoEmpleadoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +16,11 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final PeriodoPagoEmpleadoService periodoPagoEmpleadoService;
 
-    public EmployeeController(EmployeeService employeeService){
+    public EmployeeController(EmployeeService employeeService, PeriodoPagoEmpleadoService periodoPagoEmpleadoService){
         this.employeeService=employeeService;
+        this.periodoPagoEmpleadoService = periodoPagoEmpleadoService;
     }
 
     @GetMapping("/listar")
@@ -48,6 +52,13 @@ public class EmployeeController {
         );
         return ResponseEntity.ok("Empleado movido correctamente");
     }
+
+    @GetMapping("/{tipoPeriodo}")
+    public ResponseEntity<List<EmpleadoResponse>> obtenerEmpleadosPorTipoPeriodo(@PathVariable Long tipoPeriodo) {
+        List<EmpleadoResponse> empleados = employeeService.obtenerEmpleadosPorTipoPeriodo(tipoPeriodo);
+        return ResponseEntity.ok(empleados);
+    }
+
 
 
 

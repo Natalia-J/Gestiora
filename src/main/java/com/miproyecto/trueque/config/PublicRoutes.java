@@ -13,7 +13,8 @@ public abstract class PublicRoutes {
     public static List<String> rutasSinEmpresa() {
         return List.of(
                 "/api/empresa/crear",
-                "/api/empresa/obtener"
+                "/api/empresa/obtener",
+                "/api/catalog/catalogos"
         );
     }
 }

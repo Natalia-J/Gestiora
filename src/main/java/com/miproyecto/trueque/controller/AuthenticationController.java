@@ -27,8 +27,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerClient(@RequestBody RegisterRequest register){
-        return ResponseEntity.ok(Map.of("message",authenticationService.registerClient(register)));
+    public ResponseEntity<?> registerClient(@RequestBody RegisterRequest register) {
+        Client client = authenticationService.registerClient(register);
+        String token = jwtService.generateToken(client);
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 
     @PostMapping("/login")
@@ -39,11 +41,5 @@ public class AuthenticationController {
         LoginResponse response = new LoginResponse(token);
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/mensaje")
-    public ResponseEntity<?> mensaje(){
-        return ResponseEntity.ok("mensaje");
-    }
-
 }
 

@@ -14,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface PeriodosCreadosEmpleadoRepository extends JpaRepository<PeriodoPago, Long> {
     Optional<PeriodoPago> findByEmpresa_IdAndEstadoTrue(Long empresaId);
+    List<PeriodoPago> findAllByEmpresa_IdAndEstadoTrue(Long empresaId);
     Optional<PeriodoPago> findByEmpresa_IdAndEstadoTrueAndTipoPeriodoEmpleadoId(Long empresaId, Long tipoPeriodoEmpleadoId);
 
     Optional<PeriodoPago> findFirstByEmpresaIdAndEstadoTrueAndTipoPeriodoEmpleadoIdOrderByFechaInicioDesc(

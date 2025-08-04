@@ -19,7 +19,7 @@ public class AuthenticationService {
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String registerClient(RegisterRequest register) {
+    public Client registerClient(RegisterRequest register) {
         if(clientRepository.findByEmail(register.getEmail()).isPresent()) {
             throw new CorreoYaRegistradoException("EL correo ya esta registrado", HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST);
         }
@@ -33,9 +33,10 @@ public class AuthenticationService {
         newClient.setPassword(passwordEncoder.encode(register.getPassword()));
         newClient.setEmail(register.getEmail());
         clientRepository.save(newClient);
-        return"El registro ha sido exitoso";
 
+        return newClient;
     }
+
 
     public Client obtenerPorCorreo(String email){
         return clientRepository.findByEmail(email)

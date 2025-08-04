@@ -25,4 +25,16 @@ public class CatalogController {
         return ResponseEntity.ok(catalogService.getAllCatalogs());
     }
 
+    @GetMapping("/inconsistencias")
+    public ResponseEntity<?> listarInconsistencias(){
+        return ResponseEntity.ok(catalogService.getInconsistencias());
+    }
+
+
+    @GetMapping("/periodo")
+    public ResponseEntity<?> listarPeriodos(){
+        return ResponseEntity.ok(catalogService.getTipoPeriodos());
+    }
+
+
 }

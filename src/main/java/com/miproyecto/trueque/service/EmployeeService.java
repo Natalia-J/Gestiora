@@ -1,5 +1,6 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.EmpleadoResponse;
 import com.miproyecto.trueque.dto.EmployeeRequest;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.*;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -206,5 +208,13 @@ public class EmployeeService {
         empleado.setDepartamentoEmple(nuevoDepartamento);
         employeeRepository.save(empleado);
     }
+
+    public List<EmpleadoResponse> obtenerEmpleadosPorTipoPeriodo(Long tipoPeriodo) {
+        List<Employee> empleados = employeeRepository.findByTipoPeriodoId(tipoPeriodo);
+        return empleados.stream()
+                .map(e -> new EmpleadoResponse(e.getId(), e.getNombreEmpleado(), e.getCodigoEmpleado()))
+                .collect(Collectors.toList());
+    }
+
 
 }

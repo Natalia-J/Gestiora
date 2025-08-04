@@ -35,6 +35,7 @@ public class CatalogService {
     private BaseCotizacionRepository baseCotizacionRepository;
     private InconsistenciasRepository inconsistenciasRepository;
     private JustificacionRepository justificacionRepository;
+    private TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
 
     public CatalogService(IMSSEmployeeRepository imssEmployeeRepository, SBCEmpleadoRepository sbcEmpleadoRepository,
                           EntidadFederativaRepository entidadFederativaRepository, EstadoCivilRepository estadoCivilRepository,
@@ -43,7 +44,7 @@ public class CatalogService {
                           TipoContratoEmpleadoRepository tipoContratoEmpleadoRepository, TipoPeriodoRepository tipoPeriodoRepository,
                           TipoPrestacionRepository tipoPrestacionRepository, ZonaSalarioRepository zonaSalarioRepository, TipoJornadaRepository tipoJornadaRepository,
                           BasePagoRepository basePagoRepository, DiaSemanaRepository diaSemanaRepository, BaseCotizacionRepository baseCotizacionRepository, InconsistenciasRepository inconsistenciasRepository,
-                          JustificacionRepository justificacionRepository) {
+                          JustificacionRepository justificacionRepository, TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository) {
         this.imssEmployeeRepository = imssEmployeeRepository;
         this.sbcEmpleadoRepository = sbcEmpleadoRepository;
         this.entidadFederativaRepository = entidadFederativaRepository;
@@ -64,7 +65,27 @@ public class CatalogService {
         this.baseCotizacionRepository = baseCotizacionRepository;
         this.inconsistenciasRepository = inconsistenciasRepository;
         this.justificacionRepository = justificacionRepository;
+        this.tipoPeriodoEmpleadoRepository = tipoPeriodoEmpleadoRepository;
     }
+
+
+    public List<GenericCatalogResponse> getInconsistencias() {
+       return inconsistenciasRepository.findAll()
+                .stream().map(r->new GenericCatalogResponse(
+                        r.getId(),
+                        r.getInconsistencias().name()
+                )).collect(Collectors.toList());
+    }
+
+    public List<GenericCatalogResponse> getTipoPeriodos() {
+        return tipoPeriodoEmpleadoRepository.findAll()
+                .stream().map(r->new GenericCatalogResponse(
+                        r.getId(),
+                        r.getTipoPeriodoEmpleado().name()
+                )).collect(Collectors.toList());
+    }
+
+
 
     public CatalogsResponse getAllCatalogs(){
         List<GenericCatalogResponse> imssEmpleado = imssEmployeeRepository.findAll()

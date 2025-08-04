@@ -1,5 +1,6 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.PeriodoEmpleadoResponseBin;
 import com.miproyecto.trueque.dto.PeriodoPagoRequest;
 import com.miproyecto.trueque.dto.PeriodoPagoResponse;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
@@ -11,6 +12,7 @@ import com.miproyecto.trueque.model.catalogs.TipoPeriodoEmpleado;
 import com.miproyecto.trueque.model.enums.TipoPeriodoEmpleadoEnum;
 import com.miproyecto.trueque.repository.EmployeeRepository;
 import com.miproyecto.trueque.repository.EmpresaRepository;
+import com.miproyecto.trueque.repository.PeriodoPagoRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpleadoRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpresaRepository;
 import com.miproyecto.trueque.repository.catalog.TipoPeriodoEmpleadoRepository;
@@ -31,6 +33,15 @@ public class PeriodoPagoEmpleadoService {
     private final PeriodosCreadosEmpleadoRepository periodosCreadosEmpleadoRepository;
     private final DiasHorasService diasHorasService;
     private final EmployeeRepository employeeRepository;
+    private final PeriodoPagoRepository periodoPagoRepository;
+
+    public List<PeriodoEmpleadoResponseBin> getPeriodosEmpleado(Long tipoPeriodo){
+       List<PeriodoPago> periodos = periodoPagoRepository.findByTipoPeriodoEmpleado_Id(tipoPeriodo);
+
+       return periodos.stream()
+               .map(periodoPago-> new PeriodoEmpleadoResponseBin(periodoPago.getId(), periodoPago.getFechaInicio() + "-" + periodoPago.getFechaFin())).toList();
+
+    }
 
     public List<PeriodoPagoResponse> generarPeriodosPago(List<PeriodoPagoRequest> solicitudes) {
         Long empresaId = EmpresaContextHolder.getEmpresaId();

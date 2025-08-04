@@ -23,9 +23,6 @@ public class ReporteController {
         try {
             List<ReporteResponse> reporte = reporteService.generarReporte(request);
 
-            if (reporte.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No se encontraron resultados para los filtros proporcionados.");
-            }
 
             return ResponseEntity.ok(reporte);
 
