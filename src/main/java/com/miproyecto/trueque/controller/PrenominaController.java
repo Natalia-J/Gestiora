@@ -1,8 +1,7 @@
 package com.miproyecto.trueque.controller;
 
-import com.miproyecto.trueque.dto.FiltroPeriodoRequest;
-import com.miproyecto.trueque.dto.PrenominaRequest;
-import com.miproyecto.trueque.dto.PrenominaResponse;
+import com.miproyecto.trueque.dto.*;
+import com.miproyecto.trueque.model.Prenomina;
 import com.miproyecto.trueque.service.NominaExportService;
 import com.miproyecto.trueque.service.PrenominaService;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/prenomina")
@@ -80,4 +80,70 @@ public class PrenominaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("/export/pdf")
+    public ResponseEntity<byte[]> exportNominaPdfVista(@RequestBody EmployeeIdsRequest request) {
+        List<Long> employeeIds = request.getEmployeeIds();
+
+        byte[] bytes;
+        HttpHeaders headers = new HttpHeaders();
+
+        if (employeeIds.size() == 1) {
+            // PDF individual
+            bytes = nominaExportService.exportPdf(employeeIds.get(0));
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "nomina_empleado_" + employeeIds.get(0) + ".pdf");
+        } else {
+            bytes = nominaExportService.exportPdfMultiplesZip(employeeIds);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "nominas_empleados.zip");
+        }
+
+        headers.setContentLength(bytes.length);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/export/pdf/vista")
+    public ResponseEntity<byte[]> exportNominaPdf(@RequestBody EmployeeIdsRequest request) {
+        List<Long> employeeIds = request.getEmployeeIds();
+
+        byte[] pdfBytes;
+
+        if (employeeIds.size() == 1) {
+            pdfBytes = nominaExportService.exportPdf(employeeIds.get(0));
+        } else {
+            pdfBytes = nominaExportService.exportPdfMultiples(employeeIds);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("inline", "nomina_empleados.pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+    }
+
+
+
+
+    @GetMapping("/por-tipo-periodo/{tipoPeriodoId}")
+    public ResponseEntity<List<PrenominaResponseTabla>> obtenerPorTipoPeriodo(@PathVariable Long tipoPeriodoId) {
+        List<PrenominaResponseTabla> lista = prenominaService.obtenerPorTipoPeriodo(tipoPeriodoId);
+        return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/empleado/{empleadoId}")
+    public ResponseEntity<?> obtenerPrenominaPorEmpleado(@PathVariable Long empleadoId) {
+        Optional<Prenomina> prenominaOpt = prenominaService.findByEmpleadoId(empleadoId);
+
+        if (prenominaOpt.isPresent()) {
+            return ResponseEntity.ok(prenominaOpt.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró prenómina para el empleado " + empleadoId);
+        }
+    }
+
 }

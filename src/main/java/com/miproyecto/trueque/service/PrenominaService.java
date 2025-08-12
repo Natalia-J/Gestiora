@@ -2,6 +2,7 @@ package com.miproyecto.trueque.service;
 
 import com.miproyecto.trueque.dto.PrenominaRequest;
 import com.miproyecto.trueque.dto.PrenominaResponse;
+import com.miproyecto.trueque.dto.PrenominaResponseTabla;
 import com.miproyecto.trueque.model.DiasHoras;
 import com.miproyecto.trueque.model.Employee;
 import com.miproyecto.trueque.model.Prenomina;
@@ -13,6 +14,7 @@ import com.miproyecto.trueque.repository.EmployeeRepository;
 import com.miproyecto.trueque.repository.PrenominaRepository;
 import com.miproyecto.trueque.repository.ReporteRepository;
 import com.miproyecto.trueque.repository.catalog.PeriodosCreadosEmpleadoRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +22,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -38,6 +41,13 @@ public class PrenominaService {
         this.prenominaRepository = prenominaRepository;
     }
 
+    @PostConstruct
+    public void inicializarPrenomina() {
+        crearPrenominaParaTodosLosEmpleados();
+    }
+
+
+
     public void guardarPrenomina(Long empleadoId, Long tipoPeriodoId, PrenominaRequest request) {
         DatosPrenomina datos = obtenerDatosPrenomina(empleadoId, tipoPeriodoId);
 
@@ -48,7 +58,10 @@ public class PrenominaService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal ingresoTotal = datos.sueldoBase().add(percepciones);
+
+        // Aquí recalculamos ISR siempre con el ingreso total actualizado
         BigDecimal isr = calcularISR(ingresoTotal);
+
         BigDecimal deducciones = Stream.of(
                         isr,
                         request.getImss(), request.getInfonavit(), request.getOtrasDeducciones())
@@ -74,7 +87,7 @@ public class PrenominaService {
         prenomina.setGratificaciones(request.getGratificaciones());
         prenomina.setAguinaldoProporcional(request.getAguinaldoProporcional());
         prenomina.setPrimaVacacional(request.getPrimaVacacional());
-        prenomina.setISR(isr);
+        prenomina.setISR(isr);  // ISR actualizado aquí
         prenomina.setIMSS(request.getImss());
         prenomina.setINFONAVIT(request.getInfonavit());
         prenomina.setOtrasDeducciones(request.getOtrasDeducciones());
@@ -82,6 +95,7 @@ public class PrenominaService {
 
         prenominaRepository.save(prenomina);
     }
+
 
 
     private DatosPrenomina obtenerDatosPrenomina(Long empleadoId, Long tipoPeriodoId) {
@@ -198,4 +212,64 @@ public class PrenominaService {
                 p.getTotalNeto()
         )).toList();
     }
+
+    public List<PrenominaResponseTabla> obtenerPorTipoPeriodo(Long tipoPeriodoId) {
+        return prenominaRepository.findByTipoPeriodoEmpleado(tipoPeriodoId);
+    }
+
+    public void crearPrenominaParaTodosLosEmpleados() {
+        List<Employee> empleados = employeeRepository.findAll();
+
+        for (Employee empleado : empleados) {
+            Long tipoPeriodoId = empleado.getTipoPeriodo().getId();
+
+            // Buscar periodo activo
+            PeriodoPago periodo = periodosCreadosEmpleadoRepository
+                    .findByTipoPeriodoEmpleado_IdAndEstadoTrue(tipoPeriodoId)
+                    .orElse(null);
+
+            if (periodo == null) {
+                continue; // Saltamos si no hay periodo activo
+            }
+
+            // Verificar si ya existe prenomina
+            boolean existe = prenominaRepository
+                    .findByEmpleado_IdAndPeriodoPago_Id(empleado.getId(), periodo.getId())
+                    .isPresent();
+
+            if (existe) {
+                continue; // Ya existe, pasamos al siguiente
+            }
+
+            // Calcular datos base
+            DatosPrenomina datos = obtenerDatosPrenomina(empleado.getId(), tipoPeriodoId);
+
+            Prenomina nuevaPrenomina = new Prenomina();
+            nuevaPrenomina.setEmpleado(empleado);
+            nuevaPrenomina.setPeriodoPago(periodo);
+            nuevaPrenomina.setSueldoBase(datos.sueldoBase());
+            nuevaPrenomina.setHorasExtras(datos.pagoHorasExtras());
+
+            // Iniciar en cero el resto de campos
+            nuevaPrenomina.setBono(BigDecimal.ZERO);
+            nuevaPrenomina.setComisiones(BigDecimal.ZERO);
+            nuevaPrenomina.setGratificaciones(BigDecimal.ZERO);
+            nuevaPrenomina.setAguinaldoProporcional(BigDecimal.ZERO);
+            nuevaPrenomina.setPrimaVacacional(BigDecimal.ZERO);
+            nuevaPrenomina.setISR(BigDecimal.ZERO);
+            nuevaPrenomina.setIMSS(BigDecimal.ZERO);
+            nuevaPrenomina.setINFONAVIT(BigDecimal.ZERO);
+            nuevaPrenomina.setOtrasDeducciones(BigDecimal.ZERO);
+
+            BigDecimal totalNeto = datos.sueldoBase().add(datos.pagoHorasExtras());
+            nuevaPrenomina.setTotalNeto(totalNeto.doubleValue());
+
+            prenominaRepository.save(nuevaPrenomina);
+        }
+    }
+
+    public Optional<Prenomina> findByEmpleadoId(Long empleadoId) {
+        return prenominaRepository.findByEmpleado_Id(empleadoId);
+    }
+
 }

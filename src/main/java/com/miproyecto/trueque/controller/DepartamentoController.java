@@ -1,5 +1,8 @@
 package com.miproyecto.trueque.controller;
 
+import com.miproyecto.trueque.dto.DepartamentoRequest;
+import com.miproyecto.trueque.dto.DepartamentoResponse;
+import com.miproyecto.trueque.dto.EmpleadoDepartamentoResponse;
 import com.miproyecto.trueque.model.Departamento;
 import com.miproyecto.trueque.service.DepartamentoService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/departamentos")
@@ -19,14 +23,17 @@ public class DepartamentoController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Departamento> crear(@RequestBody Departamento depto) {
-        Departamento creado = departamentoService.guardar(depto);
+    public ResponseEntity<Departamento> crear(@RequestBody DepartamentoRequest deptoRequest) {
+        Departamento creado = departamentoService.guardar(deptoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @GetMapping("/listar")
-    public List<Departamento> listar() {
-        return departamentoService.listar();
+    public List<DepartamentoResponse> listar() {
+        List<Departamento> departamentos = departamentoService.listar();
+        return departamentos.stream()
+                .map(DepartamentoResponse::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/codigo/{codigo}")

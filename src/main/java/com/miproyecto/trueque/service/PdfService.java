@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class PdfService {
@@ -256,5 +259,60 @@ public class PdfService {
         timestamp.setAlignment(Element.ALIGN_CENTER);
 
         document.add(timestamp);
+    }
+
+    public byte[] generateNominaZipMultiples(List<Prenomina> prenominas) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zipOut = new ZipOutputStream(baos)) {
+
+            for (Prenomina prenomina : prenominas) {
+                byte[] pdfBytes = generateNominaPdf(prenomina); // Genera PDF individual
+
+                ZipEntry zipEntry = new ZipEntry("nomina_empleado_" + prenomina.getEmpleado().getNumeroEmpleado() + ".pdf");
+                zipOut.putNextEntry(zipEntry);
+                zipOut.write(pdfBytes);
+                zipOut.closeEntry();
+            }
+
+            zipOut.finish();
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando ZIP con PDFs: " + e.getMessage(), e);
+        }
+    }
+
+
+    public byte[] generateNominaPdfMultiples(List<Prenomina> prenominas) {
+        try {
+            Document document = new Document(PageSize.A4);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            document.open();
+
+            for (int i = 0; i < prenominas.size(); i++) {
+                Prenomina prenomina = prenominas.get(i);
+
+                // Agrega contenido para cada empleado (puedes reutilizar tus métodos existentes)
+                addCompanyHeader(document);
+                addEmployeeInfo(document, prenomina);
+                addPercepcionesTable(document, prenomina);
+                addDeduccionesTable(document, prenomina);
+                addTotalNeto(document, prenomina);
+                addFooter(document);
+
+                // Si no es el último, agrega salto de página
+                if (i < prenominas.size() - 1) {
+                    document.newPage();
+                }
+            }
+
+            document.close();
+            return outputStream.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generando PDF combinado: " + e.getMessage(), e);
+        }
     }
 }

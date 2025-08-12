@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class AuthenticationService {
@@ -51,5 +53,14 @@ public class AuthenticationService {
         }
         return client;
     }
+
+    public Optional<Client> obtenerPorId(Long id) {
+        return clientRepository.findById(id);
+    }
+
+    public Client actualizarClient(Client client) {
+        return clientRepository.save(client);
+    }
+
 
 }

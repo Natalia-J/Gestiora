@@ -1,5 +1,6 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.PuestoResponse;
 import com.miproyecto.trueque.model.Puesto;
 import com.miproyecto.trueque.repository.PuestoRepository;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,11 @@ public class PuestoService {
         return puestoRepository.save(puesto);
     }
 
-    public List<Puesto> obtenerTodos() {
-        return puestoRepository.findAll();
+    public List<PuestoResponse> obtenerTodos() {
+        return puestoRepository.findAll()
+                .stream()
+                .map(p -> new PuestoResponse(p.getId(), p.getNombre()))
+                .toList();
     }
 
     public Optional<Puesto> obtenerPorId(Long id) {

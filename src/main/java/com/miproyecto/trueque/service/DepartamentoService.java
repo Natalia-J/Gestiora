@@ -1,5 +1,6 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.DepartamentoRequest;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.Company;
 import com.miproyecto.trueque.model.Departamento;
@@ -21,7 +22,12 @@ public class DepartamentoService {
         this.employeeRepository=employeeRepository;
     }
 
-    public Departamento guardar(Departamento depto) {
+    // Servicio
+    public Departamento guardar(DepartamentoRequest dto) {
+        Departamento depto = new Departamento();
+        depto.setCodigo(dto.getCodigo());
+        depto.setNombreDepartamento(dto.getNombreDepartamento());
+
         if (departamentoRepository.findByCodigo(depto.getCodigo()).isPresent()) {
             throw new RuntimeException("Ya existe un departamento con ese código");
         }
@@ -35,6 +41,7 @@ public class DepartamentoService {
 
         return departamentoRepository.save(depto);
     }
+
 
     public boolean existeDepartamentoGenParaEmpresa(Company empresa) {
         return departamentoRepository.findByCodigoAndEmpresa("GEN", empresa).isPresent();

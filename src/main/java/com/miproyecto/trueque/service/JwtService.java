@@ -1,11 +1,13 @@
 package com.miproyecto.trueque.service;
 
 import com.miproyecto.trueque.model.Client;
+import com.miproyecto.trueque.repository.ClientRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,13 +28,12 @@ public class JwtService {
     }
 
     public String generateToken(Client client) {
-        log.info(secret);
         return Jwts.builder()
                 .issuer("truque")
                 .subject(client.getId().toString())
                 .claim("username",client.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60*10))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -62,12 +64,14 @@ public class JwtService {
         }
     }
 
-    public Claims getClaims(String token) {
+
+    private Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 }
 

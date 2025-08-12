@@ -19,6 +19,7 @@ public class PeriodoEmpresaController {
 
     private final PeriodoEmpresaService periodoEmpresaService;
 
+    //agregar a registro de empresa
     @PostMapping("/crear")
     public ResponseEntity<PeriodoEmpresaResponse> crearPeriodo(
             @RequestBody PeriodoEmpresaRequest request) {

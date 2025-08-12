@@ -1,6 +1,8 @@
 package com.miproyecto.trueque.service;
 
+import com.miproyecto.trueque.dto.DireccionRequest;
 import com.miproyecto.trueque.dto.EmpleadoResponse;
+import com.miproyecto.trueque.dto.EmployeeObtenerResponse;
 import com.miproyecto.trueque.dto.EmployeeRequest;
 import com.miproyecto.trueque.interceptor.EmpresaContextHolder;
 import com.miproyecto.trueque.model.*;
@@ -78,9 +80,6 @@ public class EmployeeService {
         empleado.setApellidoMaternoEmpleado(request.getApellidoMaterno());
         empleado.setFechaAlta(request.getFechaAlta());
         empleado.setSalarioDiario(request.getSalarioDiario());
-        empleado.setSbcParteFija(request.getSbcParteFija());
-        empleado.setSbcParteVariable(request.getSbcParteVariable());
-        empleado.setTipadoUmas(request.getTipadoUmas());
         empleado.setAforeEmpleado(request.getAfore());
         empleado.setCorreoEmpleado(request.getCorreo());
         empleado.setNumeroEmpleado(request.getNumTelefono());
@@ -215,6 +214,121 @@ public class EmployeeService {
                 .map(e -> new EmpleadoResponse(e.getId(), e.getNombreEmpleado(), e.getCodigoEmpleado()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public Employee updateEmployee(Long id, EmployeeRequest request) {
+        Employee empleado = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado"));
+
+        empleado.setCodigoEmpleado(request.getCodigoEmpleado());
+        empleado.setNombreEmpleado(request.getNombre());
+        empleado.setApellidoPaternoEmpleado(request.getApellidoPaterno());
+        empleado.setApellidoMaternoEmpleado(request.getApellidoMaterno());
+        empleado.setFechaAlta(request.getFechaAlta());
+        empleado.setSalarioDiario(request.getSalarioDiario());
+        empleado.setAforeEmpleado(request.getAfore());
+        empleado.setCorreoEmpleado(request.getCorreo());
+        empleado.setNumeroEmpleado(request.getNumTelefono());
+        empleado.setNumSeguridadSocial(request.getNumSeguridadSocial());
+        empleado.setRegistroPatronalIMSS(request.getRegistroPatronalImss());
+        empleado.setFechaNacimientoEmpleado(request.getFechaNacimiento());
+        empleado.setCiudadNacimientoEmpleado(request.getCiudad());
+        empleado.setCurpEmpleado(request.getCurp());
+        empleado.setRfcEmpleado(request.getRfc());
+
+        empleado.setTipoContratoEmpleado(tipoContratoRepository.findById(request.getTipoContrato()).orElse(null));
+        empleado.setTipoPeriodo(tipoPeriodoEmpleadoRepository.findById(request.getTipoPeriodo()).orElse(null));
+        empleado.setBaseCotizacion(baseCotizacionRepository.findById(request.getBaseCotizacion()).orElse(null));
+        empleado.setDepartamentoEmple(departamentoRepository.findById(request.getDepartamento()).orElse(null));
+        empleado.setPuesto(puestoRepository.findById(request.getPuesto()).orElse(null));
+        empleado.setSindicatoEmpleado(sindicatoRepository.findById(request.getSindicato()).orElse(null));
+        empleado.setTipoPrestacionEmpleado(tipoPrestacionRepository.findById(request.getTipoPrestacion()).orElse(null));
+        empleado.setMetodoPagoEmpleado(metodoPagoRepository.findById(request.getMetodoPago()).orElse(null));
+        empleado.setTurno(turnoTrabajoRepository.findById(request.getTurnoTrabajo()).orElse(null));
+        empleado.setZonaSalario(zonaSalarioRepository.findById(request.getZonaSalario()).orElse(null));
+        empleado.setRegimenEmployee(tipoRegimenRepository.findById(request.getTipoRegimen()).orElse(null));
+        empleado.setEstadoCivil(estadoCivilRepository.findById(request.getEstadoCivil()).orElse(null));
+        empleado.setGenero(generoRepository.findById(request.getGenero()).orElse(null));
+        empleado.setEntidadFederativa(entidadFederativaRepository.findById(request.getEntidadFederativa()).orElse(null));
+        empleado.setBaseDePago(basePagoRepository.findById(request.getBaseDePago()).orElse(null));
+
+        Direccion direccion = empleado.getDireccionEmployee();
+        if (direccion == null) {
+            direccion = new Direccion();
+        }
+        direccion.setCalleEmpresa(request.getDireccion().getCalle());
+        direccion.setNumExterno(request.getDireccion().getNumExterno());
+        direccion.setNumInterno(request.getDireccion().getNumInterno());
+        direccion.setColoniaEmpresa(request.getDireccion().getColonia());
+        direccion.setCodigoPostalEmpresa(request.getDireccion().getCodigoPostal());
+        direccion.setLocalidadEmpresa(request.getDireccion().getLocalidad());
+        direccionRepository.save(direccion);
+
+        empleado.setDireccionEmployee(direccion);
+
+        return employeeRepository.save(empleado);
+    }
+
+    @Transactional
+    public void deleteEmployee(Long empleadoId) {
+        Employee empleado = employeeRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con ID: " + empleadoId));
+        employeeRepository.delete(empleado);
+    }
+
+    public EmployeeObtenerResponse obtenerEmpleadoPorId(Long empleadoId) {
+        Employee empleado = employeeRepository.findById(empleadoId)
+                .orElseThrow(() -> new IllegalArgumentException("Empleado no encontrado con ID: " + empleadoId));
+
+        DireccionRequest direccionRequest = null;
+        if (empleado.getDireccionEmployee() != null) {
+            direccionRequest = new DireccionRequest();
+            direccionRequest.setCalle(empleado.getDireccionEmployee().getCalleEmpresa());
+            direccionRequest.setNumExterno(empleado.getDireccionEmployee().getNumExterno());
+            direccionRequest.setNumInterno(empleado.getDireccionEmployee().getNumInterno());
+            direccionRequest.setColonia(empleado.getDireccionEmployee().getColoniaEmpresa());
+            direccionRequest.setCodigoPostal(empleado.getDireccionEmployee().getCodigoPostalEmpresa());
+            direccionRequest.setLocalidad(empleado.getDireccionEmployee().getLocalidadEmpresa());
+        }
+
+        return new EmployeeObtenerResponse(
+                empleado.getCodigoEmpleado(),
+                empleado.getNombreEmpleado(),
+                empleado.getApellidoPaternoEmpleado(),
+                empleado.getApellidoMaternoEmpleado(),
+                empleado.getFechaAlta(),
+                empleado.getTipoContratoEmpleado() != null ? empleado.getTipoContratoEmpleado().getId() : null,
+                empleado.getDepartamentoEmple() != null ? empleado.getDepartamentoEmple().getId() : null,
+                empleado.getTipoPeriodo() != null ? empleado.getTipoPeriodo().getId() : null,
+                empleado.getSalarioDiario(),
+                empleado.getBaseCotizacion() != null ? empleado.getBaseCotizacion().getId() : null,
+
+                empleado.getDepartamentoEmple() != null ? empleado.getDepartamentoEmple().getId() : null,
+                empleado.getPuesto() != null ? empleado.getPuesto().getId() : null,
+                empleado.getSindicatoEmpleado() != null ? empleado.getSindicatoEmpleado().getId() : null,
+                empleado.getTipoPrestacionEmpleado() != null ? empleado.getTipoPrestacionEmpleado().getId() : null,
+                empleado.getBaseDePago() != null ? empleado.getBaseDePago().getId() : null,
+                empleado.getMetodoPagoEmpleado() != null ? empleado.getMetodoPagoEmpleado().getId() : null,
+                empleado.getTurno() != null ? empleado.getTurno().getId() : null,
+                empleado.getZonaSalario() != null ? empleado.getZonaSalario().getId() : null,
+                empleado.getRegimenEmployee() != null ? empleado.getRegimenEmployee().getId() : null,
+                empleado.getAforeEmpleado(),
+                empleado.getCorreoEmpleado(),
+                empleado.getNumeroEmpleado(),
+                empleado.getNumSeguridadSocial(),
+                empleado.getRegistroPatronalIMSS(),
+                empleado.getEstadoCivil() != null ? empleado.getEstadoCivil().getId() : null,
+                empleado.getGenero() != null ? empleado.getGenero().getId() : null,
+                empleado.getFechaNacimientoEmpleado(),
+                empleado.getEntidadFederativa() != null ? empleado.getEntidadFederativa().getId() : null,
+                empleado.getCiudadNacimientoEmpleado(),
+                empleado.getCurpEmpleado(),
+                empleado.getRfcEmpleado(),
+                direccionRequest
+        );
+    }
+
+
 
 
 }

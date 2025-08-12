@@ -1,6 +1,7 @@
 package com.miproyecto.trueque.controller;
 
 import com.miproyecto.trueque.dto.EmpleadoResponse;
+import com.miproyecto.trueque.dto.EmployeeObtenerResponse;
 import com.miproyecto.trueque.dto.EmployeeRequest;
 import com.miproyecto.trueque.dto.MoverEmpleadoRequest;
 import com.miproyecto.trueque.model.Employee;
@@ -59,7 +60,27 @@ public class EmployeeController {
         return ResponseEntity.ok(empleados);
     }
 
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<Employee> editarEmpleado(@PathVariable Long id, @RequestBody EmployeeRequest request) {
+        Employee actualizado = employeeService.updateEmployee(id, request);
+        return ResponseEntity.ok(actualizado);
+    }
 
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Void> eliminarEmpleado(@PathVariable Long id) {
+        try {
+            employeeService.deleteEmployee(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
 
+    @GetMapping("/obtener/{id}")
+    public ResponseEntity<EmployeeObtenerResponse> obtenerEmpleado(@PathVariable Long id) {
+        return ResponseEntity.ok(employeeService.obtenerEmpleadoPorId(id));
+    }
 
 }

@@ -17,7 +17,7 @@ public class Prenomina {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "emplado_id")
+    @JoinColumn(name = "empleado_id")
     private Employee empleado;
 
     @Column(name = "sueldo_base", nullable = false)

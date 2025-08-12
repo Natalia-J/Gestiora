@@ -32,5 +32,7 @@ public class CatalogsResponse {
     private List<GenericCatalogResponse> baseCotizacion;
     private List<GenericCatalogResponse> inconsistencias;
     private List<GenericCatalogResponse> justificacion;
+    private List<GenericCatalogResponse> regimenEmployees;
+    private List<GenericCatalogResponse> tipoPeriodoEmpleado;
 
 }

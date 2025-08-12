@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeRequest {
+public class EmployeeObtenerResponse {
     private String codigoEmpleado;
     private String nombre;
     private String apellidoPaterno;

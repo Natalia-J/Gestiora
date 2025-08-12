@@ -1,5 +1,6 @@
 package com.miproyecto.trueque.controller;
 
+import com.miproyecto.trueque.dto.PuestoResponse;
 import com.miproyecto.trueque.model.Puesto;
 import com.miproyecto.trueque.service.PuestoService;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,10 @@ public class PuestoController {
     }
 
     @GetMapping("/obtener-todos")
-    public ResponseEntity<List<Puesto>> obtenerTodos() {
+    public ResponseEntity<List<PuestoResponse>> obtenerTodos() {
         return ResponseEntity.ok(puestoService.obtenerTodos());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Puesto> obtenerPorId(@PathVariable Long id) {

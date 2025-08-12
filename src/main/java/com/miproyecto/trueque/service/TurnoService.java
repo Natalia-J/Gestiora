@@ -117,6 +117,7 @@ public class TurnoService {
 
     public TurnoResponse mapearATurnoResponse(Turno turno) {
         TurnoResponse response = new TurnoResponse();
+        response.setTurnoId(turno.getId());
         response.setNombreTurno(turno.getNombre());
         response.setHoraEntrada(turno.getHoraEntrada());
         response.setHoraSalida(turno.getHoraSalida());

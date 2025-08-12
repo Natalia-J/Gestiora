@@ -24,4 +24,25 @@ public class NominaExportService {
 
         return pdfService.generateNominaPdf(employeeFound);
     }
+    public byte[] exportPdfMultiplesZip(List<Long> employeeIds) {
+        List<Prenomina> prenominas = employeeIds.stream()
+                .map(id -> prenominaRepository.findByEmpleadoId(id)
+                        .orElseThrow(() -> new RuntimeException("Empleado no encontrado: " + id)))
+                .toList();
+
+        return pdfService.generateNominaZipMultiples(prenominas);
+    }
+
+    public byte[] exportPdfMultiples(List<Long> employeeIds) {
+        List<Prenomina> prenominas = employeeIds.stream()
+                .map(id -> prenominaRepository.findByEmpleadoId(id)
+                        .orElseThrow(() -> new RuntimeException("Empleado no encontrado: " + id)))
+                .toList();
+
+        // Aquí debes implementar la lógica para combinar varios prenominas en un solo PDF
+        return pdfService.generateNominaPdfMultiples(prenominas);
+    }
+
+
+
 }

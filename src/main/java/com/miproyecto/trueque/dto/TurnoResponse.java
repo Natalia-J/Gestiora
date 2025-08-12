@@ -13,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TurnoResponse {
+    private Long turnoId;
     private String nombreTurno;
     private String horaEntrada;
     private String horaSalida;

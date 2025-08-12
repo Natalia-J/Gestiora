@@ -2,6 +2,8 @@ package com.miproyecto.trueque.model;
 
 import ch.qos.logback.core.model.NamedModel;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miproyecto.trueque.model.catalogs.*;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -24,6 +27,7 @@ public class Employee {
 
     @ManyToOne
     @JoinColumn(name = "empresa_id", nullable = false)
+    @JsonIgnoreProperties({"employees", "departamentos"}) // Evita cargar empleados de la empresa
     private Company empresa;
 
     @Column(name = "nombre_empleado", nullable = false)
@@ -68,54 +72,77 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "puesto_id")
     private Puesto puesto;
+
     @ManyToOne
     @JoinColumn(name = "tipo_contrato_id")
     private TipoContratoEmpleado tipoContratoEmpleado;
+
     @ManyToOne
     @JoinColumn(name = "tipo_periodo_id")
     private TipoPeriodoEmpleado tipoPeriodo;
+
     @ManyToOne
     @JoinColumn(name = "base_cotizacion_id")
     private BaseCotizacionEmpleado baseCotizacion;
+
     @ManyToOne
     @JoinColumn(name = "sindicato_id")
     private SindicatoEmpleado sindicatoEmpleado;
+
     @ManyToOne
     @JoinColumn(name = "tipo_prestacion_id")
     private TipoPrestacionEmpleado tipoPrestacionEmpleado;
+
     @ManyToOne
     @JoinColumn(name = "metodo_pago_id")
     private MetodoPagoEmpleado metodoPagoEmpleado;
+
     @OneToOne
     @JoinColumn(name = "direccion_id")
+    @JsonIgnoreProperties({"employee"}) // Evita referencia circular con Direccion
     private Direccion direccionEmployee;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonBackReference // Ya tienes esto, está bien
     @JoinColumn(name = "departamento_id", nullable = false)
     private Departamento departamentoEmple;
+
     @ManyToOne
     @JoinColumn(name = "zona_salario_id")
     private ZonaSalarioGeneral zonaSalario;
+
     @ManyToOne
     @JoinColumn(name = "base_de_pago_id")
     private BaseDePago baseDePago;
+
     @ManyToOne
     @JoinColumn(name = "turno_id")
     private Turno turno;
+
     @ManyToOne
     @JoinColumn(name = "regimen_id")
     private RegimenEmployee regimenEmployee;
+
     @ManyToOne
     @JoinColumn(name = "genero_id")
     private GeneroEmpleado genero;
+
     @ManyToOne
     @JoinColumn(name = "estado_civil_id")
     private EstadoCivilEmpleado estadoCivil;
+
     @ManyToOne
     @JoinColumn(name = "entidad_federativa_id")
     private EntidadFederativa entidadFederativa;
 
+    // ESTAS SON LAS RELACIONES MÁS PROBLEMÁTICAS - Ignóralas en la serialización
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Ignora completamente esta relación en JSON
+    private List<DiasHoras> diasHoras;
 
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Ignora completamente esta relación en JSON
+    private List<Prenomina> prenomina;
 
     public String getNombreCompleto() {
         StringBuilder sb = new StringBuilder();

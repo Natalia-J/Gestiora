@@ -4,6 +4,7 @@ import com.miproyecto.trueque.dto.CatalogsResponse;
 import com.miproyecto.trueque.dto.GenericCatalogResponse;
 import com.miproyecto.trueque.repository.catalog.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.css.ElementCSSInlineStyle;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class CatalogService {
 
+    private final StringHttpMessageConverter stringHttpMessageConverter;
     private IMSSEmployeeRepository imssEmployeeRepository;
     private SBCEmpleadoRepository sbcEmpleadoRepository;
     private EntidadFederativaRepository entidadFederativaRepository;
@@ -37,6 +39,7 @@ public class CatalogService {
     private JustificacionRepository justificacionRepository;
     private TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository;
 
+
     public CatalogService(IMSSEmployeeRepository imssEmployeeRepository, SBCEmpleadoRepository sbcEmpleadoRepository,
                           EntidadFederativaRepository entidadFederativaRepository, EstadoCivilRepository estadoCivilRepository,
                           GeneroRepository generoRepository, MetodoPagoRepository metodoPagoRepository, RegimenEmpleadoRepository regimenEmpleadoRepository,
@@ -44,7 +47,7 @@ public class CatalogService {
                           TipoContratoEmpleadoRepository tipoContratoEmpleadoRepository, TipoPeriodoRepository tipoPeriodoRepository,
                           TipoPrestacionRepository tipoPrestacionRepository, ZonaSalarioRepository zonaSalarioRepository, TipoJornadaRepository tipoJornadaRepository,
                           BasePagoRepository basePagoRepository, DiaSemanaRepository diaSemanaRepository, BaseCotizacionRepository baseCotizacionRepository, InconsistenciasRepository inconsistenciasRepository,
-                          JustificacionRepository justificacionRepository, TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository) {
+                          JustificacionRepository justificacionRepository, TipoPeriodoEmpleadoRepository tipoPeriodoEmpleadoRepository, StringHttpMessageConverter stringHttpMessageConverter) {
         this.imssEmployeeRepository = imssEmployeeRepository;
         this.sbcEmpleadoRepository = sbcEmpleadoRepository;
         this.entidadFederativaRepository = entidadFederativaRepository;
@@ -66,6 +69,7 @@ public class CatalogService {
         this.inconsistenciasRepository = inconsistenciasRepository;
         this.justificacionRepository = justificacionRepository;
         this.tipoPeriodoEmpleadoRepository = tipoPeriodoEmpleadoRepository;
+        this.stringHttpMessageConverter = stringHttpMessageConverter;
     }
 
 
@@ -84,6 +88,8 @@ public class CatalogService {
                         r.getTipoPeriodoEmpleado().name()
                 )).collect(Collectors.toList());
     }
+
+
 
 
 
@@ -190,8 +196,18 @@ public class CatalogService {
                         r.getId(),
                         r.getJustificacion().getDescripcion()
                 )).collect(Collectors.toList());
+        List<GenericCatalogResponse> regimenEmployee = regimenEmpleadoRepository.findAll()
+                .stream().map(r-> new GenericCatalogResponse(
+                        r.getId(),
+                        r.getRegimenFiscalEmployee().getDescripcion()
+                )).collect(Collectors.toList());
+        List<GenericCatalogResponse> tipoPeriodoEmpleado = tipoPeriodoEmpleadoRepository.findAll()
+                .stream().map( r -> new GenericCatalogResponse(
+                        r.getId(),
+                        r.getTipoPeriodoEmpleado().getDescription()
+                )).collect(Collectors.toList());
 
-        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoCodigo, tipoContrato, tipoPeriodo, tipoPrestacion, zonaSalario, tipoJornada, baseDePago, diaSemana, baseCotizacion, inconsistencia, justificacion);
+        return new CatalogsResponse(imssEmpleado, sbcEmpleado, entidadFederativa, estadoCivil, genero, metodoPagoEmpleado, regimenEmpleado, regimenEmpresa, sindicato, tipoCodigo, tipoContrato, tipoPeriodo, tipoPrestacion, zonaSalario, tipoJornada, baseDePago, diaSemana, baseCotizacion, inconsistencia, justificacion, regimenEmployee, tipoPeriodoEmpleado);
 
     }
 
